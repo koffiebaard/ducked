@@ -1,0 +1,28 @@
+#!/bin/bash
+
+project_dir=/data/www
+
+first_run=false
+
+IFS=$'\n'
+for project in $(ls -X1 $project_dir); do
+
+	app_name=$(basename $project)
+        app_icon=
+        app_command="cd $project_dir && pstorm $app_name"
+
+        if [ $first_run == false ]; then
+                first_run=true
+        else
+                echo ","
+        fi
+
+        echo "{"
+                echo \"name\": \"$app_name\",
+                echo \"icon\": \"$app_icon\",
+                echo \"command\": \"$app_command\"
+        echo "}"
+done
+
+echo "]"
+
