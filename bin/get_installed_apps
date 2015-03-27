@@ -5,14 +5,14 @@ echo "["
 first_run=false
 
 IFS=$'\n'
-for app_dir in $(ls -X1 ~/.local/share/applications/*.desktop && ls -X1 ls /usr/share/applications/*.desktop); do
+for app_dir in $(ls -X1 ~/.local/share/applications/*.desktop && ls -X1 /usr/share/applications/*.desktop); do
 
 	app_name=$(cat $app_dir | egrep ^Name= | cut -d = -f2)
 	app_icon=$(cat $app_dir | grep Icon | cut -d = -f2)
 	app_command=$(cat $app_dir | grep Exec | cut -d = -f2)
 	app_onlyshowin=$(cat $app_dir | grep OnlyShowIn | cut -d = -f2)
 	
-	if [ $app_onlyshowin ]; then
+	if [ "$app_onlyshowin" != "" ]; then
 		continue
 	fi
 
