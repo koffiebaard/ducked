@@ -1,0 +1,9 @@
+#!/bin/bash
+
+pid_window=$(./window_by_pid $1)
+
+if [ "$pid_window" != "" ]; then
+        echo $pid_window
+else
+        echo $(./window_by_title $1)
+fi

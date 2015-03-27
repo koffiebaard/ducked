@@ -1,0 +1,3 @@
+#!/bin/bash
+
+wmctrl -m | grep Name | awk '{print $2}'

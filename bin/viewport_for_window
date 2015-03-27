@@ -1,0 +1,9 @@
+#!/bin/bash
+
+resolution_offset=$(./get_window_offset $1)
+screen_width=$(./get_screen_resolution)
+#$(wmctrl -d | egrep -o ' [0-9]{3,4}x[0-9]{3,4} ' | head -n1 | cut -d "x" -f 1 | xargs)
+
+viewport="$(($resolution_offset / $screen_width))"
+
+echo $viewport

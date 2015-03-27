@@ -1,0 +1,5 @@
+#!/bin/bash
+
+window_id=$(./get_window $1 | awk '{print $1}')
+echo $(wmctrl -lG | grep "$window_id" | awk '{print $3}')
+
