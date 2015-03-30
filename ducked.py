@@ -4,6 +4,7 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 import pango
+from src.lib.search import Search
 
 class DuckedUI:
 
@@ -18,7 +19,8 @@ class DuckedUI:
 
     def signal_changed(self,widget):
         """Signal on change for text entry"""
-        print self.entry.get_text()
+        DuckedSearch = Search()
+        DuckedSearch.signal_changed(self, widget)
 
     def add_accelerator(self, widget, accelerator, callback):
         """Adds a keyboard shortcut"""
