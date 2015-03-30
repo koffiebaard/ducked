@@ -30,24 +30,31 @@ class DuckedUI:
             self.my_accelerators.connect_group(key, mod, gtk.ACCEL_VISIBLE, callback)
             self.window.add_accel_group(self.my_accelerators)
 
-    def __init__(self):
+    def draw_window(self):
+        """Draw the main window"""
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
 
         self.window.connect("destroy", self.destroy)
 
-        self.window.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("#f0f0f0"))
+        self.window.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("#ffffff"))
         self.window.set_border_width(10)
-        self.window.set_size_request(650,100)
+        self.window.set_size_request(650,-1)
         self.window.set_position(gtk.WIN_POS_CENTER)
         self.window.set_title("Ducked")
         self.window.set_decorated(False)
 
-        # input box
+        # We want the window at the top of the screen
+        (x, y) = self.window.get_position()
+        self.window.move(x, 150)
+
+    def draw_searchbox(self):
+        """Draw the search box on the window"""
+
         self.entry = gtk.Entry()
         self.entry.set_size_request(450,100)
 
-        self.entry.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("#f0f0f0"))
-        self.entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#f0f0f0"))
+        self.entry.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("#ffffff"))
+        self.entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#ffffff"))
         self.entry.modify_text(gtk.STATE_NORMAL, gtk.gdk.color_parse("#22352c"))
         self.entry.modify_fg(gtk.STATE_NORMAL, gtk.gdk.color_parse("#22352c"))
 
@@ -61,12 +68,22 @@ class DuckedUI:
         self.entry_box.add(self.entry)
         self.window.add(self.entry_box)
 
-        # Shortcuts & Signals
+    def set_shortcuts_signals(self):
+        """Set shortcuts & signals"""
+
         self.my_accelerators = gtk.AccelGroup()
         self.add_accelerator(self.window, "Escape", self.shortcut_destroy)
 
         # on change for text entry
         self.entry.connect("changed", self.signal_changed)
+
+    def __init__(self):
+
+        self.draw_window()
+
+        self.draw_searchbox()
+
+        self.set_shortcuts_signals()
 
         # Show the app
         self.window.show_all()
