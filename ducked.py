@@ -7,34 +7,35 @@ import pango
 
 class DuckedUI:
 
-    def callback(self, widget, data=None):
-        print "arrrrr"
-
-    def delete_event(self, widget, event, data=None):
-        return False
-
     def destroy(self, widget, data=None):
+        """Destroy all the things"""
         print "destroy all the things!"
         gtk.main_quit()
 
     def shortcut_destroy(self, widget, AccelGroup, i, control_mask):
+        """Destroy app through shortcut"""
         gtk.main_quit()
 
-    def add_accelerator(self, widget, accelerator, signal="activate"):
+    def signal_changed(self,widget):
+        """Signal on change for text entry"""
+        print self.entry.get_text()
+
+    def add_accelerator(self, widget, accelerator, callback):
         """Adds a keyboard shortcut"""
         if accelerator is not None:
             key, mod = gtk.accelerator_parse(accelerator)
             #widget.add_accelerator(signal, self.my_accelerators, key, mod, gtk.ACCEL_VISIBLE)
-            self.my_accelerators.connect_group(key, mod, gtk.ACCEL_VISIBLE, self.shortcut_destroy)
+            self.my_accelerators.connect_group(key, mod, gtk.ACCEL_VISIBLE, callback)
             self.window.add_accel_group(self.my_accelerators)
+
     def __init__(self):
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
-    
-        self.window.connect("delete_event", self.delete_event)
+
         self.window.connect("destroy", self.destroy)
-    
-        self.window.set_border_width(0)
-        self.window.set_size_request(450,100) 
+
+        self.window.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("#f0f0f0"))
+        self.window.set_border_width(10)
+        self.window.set_size_request(650,100)
         self.window.set_position(gtk.WIN_POS_CENTER)
         self.window.set_title("Ducked")
         self.window.set_decorated(False)
@@ -42,17 +43,32 @@ class DuckedUI:
         # input box
         self.entry = gtk.Entry()
         self.entry.set_size_request(450,100)
-        
+
+        self.entry.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("#f0f0f0"))
+        self.entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#f0f0f0"))
+        self.entry.modify_text(gtk.STATE_NORMAL, gtk.gdk.color_parse("#22352c"))
+        self.entry.modify_fg(gtk.STATE_NORMAL, gtk.gdk.color_parse("#22352c"))
+
         font_description = pango.FontDescription('Lucida Sans %s' % 36)
         self.entry.modify_font(font_description)
+        self.entry.set_inner_border(None);
+        self.entry.set_has_frame(0);
 
-        self.window.add(self.entry)
-        self.entry.show()
-        
+        # Wrap input box for styling
+        self.entry_box = gtk.EventBox()
+        self.entry_box.add(self.entry)
+        self.window.add(self.entry_box)
+
+        # Shortcuts & Signals
         self.my_accelerators = gtk.AccelGroup()
-        self.add_accelerator(self.window, "Escape", signal="destroy")
-        self.window.show()
-        
+        self.add_accelerator(self.window, "Escape", self.shortcut_destroy)
+
+        # on change for text entry
+        self.entry.connect("changed", self.signal_changed)
+
+        # Show the app
+        self.window.show_all()
+
     def main(self):
         gtk.main()
 
