@@ -8,6 +8,8 @@ from src.lib.search import Search
 
 class DuckedUI:
 
+    Search = Search()
+
     def destroy(self, widget, data=None):
         """Destroy all the things"""
         print "destroy all the things!"
@@ -19,14 +21,14 @@ class DuckedUI:
 
     def signal_goto(self, widget):
         """Go to result"""
-        DuckedSearch = Search()
-        DuckedSearch.signal_goto(self, widget)
+
+        print self.treeview.get_selection()
+        self.Search.signal_goto(self, widget)
         gtk.main_quit()
 
     def signal_changed(self,widget):
         """Signal on change for text entry"""
-        DuckedSearch = Search()
-        DuckedSearch.signal_changed(self, widget)
+        self.Search.signal_changed(self, widget)
 
     def add_accelerator(self, widget, accelerator, callback):
         """Adds a keyboard shortcut"""
@@ -57,7 +59,7 @@ class DuckedUI:
         """Draw the search box on the window"""
 
         self.entry = gtk.Entry()
-        self.entry.set_size_request(450,100)
+        self.entry.set_size_request(650,100)
 
         self.entry.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("#ffffff"))
         self.entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#ffffff"))
@@ -66,13 +68,69 @@ class DuckedUI:
 
         font_description = pango.FontDescription('Lucida Sans %s' % 36)
         self.entry.modify_font(font_description)
-        self.entry.set_inner_border(None);
-        self.entry.set_has_frame(0);
+        self.entry.set_inner_border(None)
+        self.entry.set_has_frame(0)
 
         # Wrap input box for styling
-        self.entry_box = gtk.EventBox()
-        self.entry_box.add(self.entry)
-        self.window.add(self.entry_box)
+        self.table = gtk.Table(1, 2, True)
+        self.table.attach(self.entry, 0, 1, 0, 1)
+        self.window.add(self.table)
+        self.window.set_focus(self.entry)
+
+    def draw_listview(self):
+
+        # list store
+        self.liststore = gtk.ListStore(str, str, str, 'gboolean')
+        self.treeview = gtk.TreeView(self.liststore)
+
+        # Create column 1
+        self.tvcolumn = gtk.TreeViewColumn('')
+        self.treeview.append_column(self.tvcolumn)
+
+        # Create column 2
+        self.tvcolumn1 = gtk.TreeViewColumn('')
+        self.treeview.append_column(self.tvcolumn1)
+
+        # Render Icon
+        self.cellpb = gtk.CellRendererPixbuf()
+        self.cellpb.set_property('cell-background', '#ffffff')
+        self.tvcolumn.pack_start(self.cellpb, False)
+        self.tvcolumn.set_attributes(self.cellpb, stock_id=1)
+
+        # Render App name
+        self.cell = gtk.CellRendererText()
+        self.cell.set_property('cell-background', '#ffffff')
+        self.tvcolumn.pack_start(self.cell, True)
+        self.tvcolumn.set_attributes(self.cell, text=0)
+
+        # Render shortcut
+        self.cell1 = gtk.CellRendererText()
+        self.cell1.set_property('cell-background', '#ffffff')
+        self.tvcolumn1.pack_start(self.cell1, True)
+        self.tvcolumn1.set_attributes(self.cell1, text=2)
+
+        self.treeview.set_headers_visible(False)
+
+        self.tvcolumn.set_resizable(True)
+        self.tvcolumn1.set_resizable(True)
+
+        self.table.attach(self.treeview, 0, 1, 1, 2)
+
+    def remove_listview(self):
+        if hasattr(self, "treeview"):
+            self.table.remove(self.treeview)
+
+    def redraw_listview(self):
+        self.remove_listview()
+        self.draw_listview()
+
+    def clear_listview(self):
+        self.liststore.clear()
+        self.treeview.hide()
+
+    def append_to_listview(self, app_name, image_path, shortcut, command):
+        self.treeview.show()
+        self.liststore.append([app_name, gtk.gdk.pixbuf_new_from_file(image_path), shortcut, True])
 
     def set_shortcuts_signals(self):
         """Set shortcuts & signals"""
@@ -82,17 +140,21 @@ class DuckedUI:
 
         # on change for text entry
         self.entry.connect("changed", self.signal_changed)
+
+        # on submit for text entry
         self.entry.connect("activate", self.signal_goto)
+
+        self.treeview.get_selection().connect("changed", self.signal_goto)
 
     def __init__(self):
 
         self.draw_window()
-
         self.draw_searchbox()
+        self.draw_listview()
+        self.clear_listview();
 
         self.set_shortcuts_signals()
 
-        # Show the app
         self.window.show_all()
 
     def main(self):

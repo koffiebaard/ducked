@@ -7,11 +7,23 @@ class Search:
     OS = OSHandler()
     search_results = []
 
-    def signal_changed(self, Widget, widget):
+    def signal_changed(self, Window, widget):
         """Signal on change for text entry"""
-        query = Widget.entry.get_text()
-        print query
-        print self.search(query)
+        query = Window.entry.get_text()
+
+        if len(query) > 0:
+            Window.redraw_listview()
+
+            print query
+            search_results = self.search(query)
+            print search_results
+
+            for index in range(0,6):
+                if index < len(search_results):
+                    app = search_results[index]
+                    Window.append_to_listview(app["name"], "/home/tim-en-bren/apps/intellij/bin/idea.png", "", app["command"])
+        else:
+            Window.remove_listview()
 
     def signal_goto(self, Widget, widget):
         """Go to result"""
