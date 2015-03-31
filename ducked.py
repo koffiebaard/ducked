@@ -17,6 +17,12 @@ class DuckedUI:
         """Destroy app through shortcut"""
         gtk.main_quit()
 
+    def signal_goto(self, widget):
+        """Go to result"""
+        DuckedSearch = Search()
+        DuckedSearch.signal_goto(self, widget)
+        gtk.main_quit()
+
     def signal_changed(self,widget):
         """Signal on change for text entry"""
         DuckedSearch = Search()
@@ -76,6 +82,7 @@ class DuckedUI:
 
         # on change for text entry
         self.entry.connect("changed", self.signal_changed)
+        self.entry.connect("activate", self.signal_goto)
 
     def __init__(self):
 

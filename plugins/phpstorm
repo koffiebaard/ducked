@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "["
+
 project_dir=/data/www
 
 first_run=false
@@ -7,9 +9,9 @@ first_run=false
 IFS=$'\n'
 for project in $(ls -X1 $project_dir); do
 
-	app_name=$(basename $project)
+	    app_name=$(basename $project)
         app_icon=
-        app_command="cd $project_dir && pstorm $app_name"
+        app_command="cd $project_dir && pstorm $project"
 
         if [ $first_run == false ]; then
                 first_run=true
@@ -25,4 +27,3 @@ for project in $(ls -X1 $project_dir); do
 done
 
 echo "]"
-

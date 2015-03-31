@@ -5,6 +5,7 @@ from src.lib.os_handler import OSHandler
 class Search:
 
     OS = OSHandler()
+    search_results = []
 
     def signal_changed(self, Widget, widget):
         """Signal on change for text entry"""
@@ -12,16 +13,25 @@ class Search:
         print query
         print self.search(query)
 
+    def signal_goto(self, Widget, widget):
+        """Go to result"""
+        query = Widget.entry.get_text()
+        self.search(query)
+
+        print "Go to " + query
+
+        if len(self.search_results) == 1:
+            self.OS.goto_app(self.search_results[0]["command"])
 
     def search(self, query):
         """Search through apps"""
 
         query = query.lower()
-        apps = self.OS.get_installed_apps()
-        search_results = []
+        apps = self.OS.get_all_apps()
+        self.search_results = []
 
         for app in apps:
             if app["name"][:len(query)].lower() == query:
-                search_results.append(app)
+                self.search_results.append(app)
 
-        return search_results
+        return self.search_results
