@@ -32,5 +32,6 @@ class OSHandler:
             self.installed_apps.extend(plugin_apps)
 
     def goto_app(self, command):
+        command += " &"
         print command
         os.popen(command)

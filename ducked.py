@@ -19,15 +19,28 @@ class DuckedUI:
         """Destroy app through shortcut"""
         gtk.main_quit()
 
+    def signal_changed(self,widget):
+        """Signal on change for text entry. Searches for apps."""
+        self.Search.signal_changed(self, widget)
+
     def signal_goto(self, widget):
-        """Go to result"""
-        print self.treeview.get_selection()
-        self.Search.signal_goto(self, widget)
+        """App selection through enter key on textview"""
+        print "go by textview"
+        query = self.entry.get_text()
+        self.Search.signal_goto_first_result(query)
         gtk.main_quit()
 
-    def signal_changed(self,widget):
-        """Signal on change for text entry"""
-        self.Search.signal_changed(self, widget)
+    def signal_enter_key(self, widget, event):
+        """App selection through enter key on listview."""
+        if event.keyval == 65293:
+            (model, iter) = self.treeview.get_selection().get_selected()
+            if iter:
+                print "go by window enter"
+                app_name = model.get_value(iter, 0)
+                self.Search.signal_goto_app_name(app_name)
+                gtk.main_quit()
+                return True
+        return False
 
     def add_accelerator(self, widget, accelerator, callback):
         """Adds a keyboard shortcut"""
@@ -72,6 +85,7 @@ class DuckedUI:
 
         # Wrap input box for styling
         self.table = gtk.Table(1, 2, True)
+        self.table.set_homogeneous(False)
         self.table.attach(self.entry, 0, 1, 0, 1)
         self.window.add(self.table)
         self.window.set_focus(self.entry)
@@ -98,7 +112,10 @@ class DuckedUI:
 
         # Render App name
         self.cell = gtk.CellRendererText()
+        font_description = pango.FontDescription('Lucida Sans %s' % 21)
+        self.cell.set_property('font-desc', font_description)
         self.cell.set_property('cell-background', '#ffffff')
+        self.cell.set_property('foreground', '#525252')
         self.tvcolumn.pack_start(self.cell, True)
         self.tvcolumn.set_attributes(self.cell, text=0)
 
@@ -113,11 +130,17 @@ class DuckedUI:
         self.tvcolumn.set_resizable(True)
         self.tvcolumn1.set_resizable(True)
 
+        self.treeview.set_cursor(0)
+        self.treeview.get_selection().set_mode(gtk.SELECTION_BROWSE)
+        self.window.connect('key-press-event', self.signal_enter_key)
+
         self.table.attach(self.treeview, 0, 1, 1, 2)
+        self.window.resize(1,1)
 
     def remove_listview(self):
         if hasattr(self, "treeview"):
             self.table.remove(self.treeview)
+        self.window.resize(1,1)
 
     def redraw_listview(self):
         self.remove_listview()
@@ -126,6 +149,8 @@ class DuckedUI:
     def clear_listview(self):
         self.liststore.clear()
         self.treeview.hide()
+        self.window.resize(1,1)
+        self.window.resize(1,1)
 
     def append_to_listview(self, app_name, image_path, shortcut, command):
         self.treeview.show()

@@ -23,17 +23,22 @@ class Search:
                     app = search_results[index]
                     Window.append_to_listview(app["name"], "/home/tim-en-bren/apps/intellij/bin/idea.png", "", app["command"])
         else:
-            Window.remove_listview()
+            Window.clear_listview()
 
-    def signal_goto(self, Widget, widget):
+    def signal_goto_first_result(self, query):
         """Go to result"""
-        query = Widget.entry.get_text()
         self.search(query)
 
-        print "Go to " + query
+        if len(self.search_results) > 0:
+            app = self.search_results[0]
+            print "Go to " + app["name"]
+            self.OS.goto_app(app["command"])
 
-        if len(self.search_results) == 1:
-            self.OS.goto_app(self.search_results[0]["command"])
+    def signal_goto_app_name(self, app_name):
+        app = self.get_app_by_name(app_name)
+
+        if app:
+            self.OS.goto_app(app["command"])
 
     def search(self, query):
         """Search through apps"""
@@ -47,3 +52,11 @@ class Search:
                 self.search_results.append(app)
 
         return self.search_results
+
+    def get_app_by_name(self, app_name):
+
+        apps = self.OS.get_all_apps()
+
+        for app in apps:
+            if app["name"] == app_name:
+                return app
