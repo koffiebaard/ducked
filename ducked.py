@@ -21,7 +21,6 @@ class DuckedUI:
 
     def signal_goto(self, widget):
         """Go to result"""
-
         print self.treeview.get_selection()
         self.Search.signal_goto(self, widget)
         gtk.main_quit()
@@ -151,7 +150,7 @@ class DuckedUI:
         self.draw_window()
         self.draw_searchbox()
         self.draw_listview()
-        self.clear_listview();
+        self.clear_listview()
 
         self.set_shortcuts_signals()
 
