@@ -54,12 +54,19 @@ class Search:
     def search(self, query):
         """Search for anything the user wants"""
 
-        # is a dir/file kind of syntaxy goodness?
-        if re.search('^[~]*[/]+', query):
+        # is it a direct match to a 4chan board?
+        if query in ["/a/","/c/","/w/","/m/","/cgl/","/cm/","/f/","/n/","/jp/","/vp/","/v/","/vg/","/vr/","/co/","/g/","/tv/","/k/","/o/","/an/","/tg/","/sp/","/asp/","/sci/","/int/","/out/","/toy/","/biz/","/i/","/po/","/p/","/ck/","/ic/","/wg/","/mu/","/fa/","/3/","/gd/","/diy/","/wsg/","/trv/","/fit/","/x/","/lit/","/adv/","/lgbt/","/mlp/","/b/","/r/","/r9k/","/pol/","/soc/","/s4s/","/s/","/hc/","/hm/","/h/","/e/","/u/","/d/","/y/","/t/","/hr/","/gif/"]:
             self.search_results = [{
-                "name": "open " + query,
+                "name": "Go to " + query,
+                "command": self.OS.cwd() + "/../../bin/open_file https://boards.4chan.org" + query,
+                "icon": self.OS.cwd() + "/../../icons/4chan.png"
+            }]
+        # is a dir/file kind of syntaxy goodness?
+        elif re.search('^[~]*[/]+', query):
+            self.search_results = [{
+                "name": "Open " + query,
                 "command": self.OS.cwd() + "/../../bin/open_file " + query,
-                "icon": ""
+                "icon": self.OS.cwd() + "/../../icons/dir.png"
             }]
         # does this search query look particularly calculatey?
         elif re.search('^[\(\)0-9\. ]{1}[\(\)0-9\. +\/%\^\*\-]+[\(\)0-9\. ]{1}$', query):
@@ -74,6 +81,59 @@ class Search:
                 "name": self.OS.run_command('echo "scale=10; ' + query + '" | bc'),
                 "command": fallback_command,
                 "icon": ""
+            }]
+        elif re.search('^github ', query) or re.search('^gh ', query):
+            query = re.sub("^github ", "", query)
+            query = re.sub("^gh ", "", query)
+            self.search_results = [{
+                "name": "Github to \"" + query + "\"",
+                "command": self.OS.cwd() + "/../../bin/open_file https://github.com/search?q=" + urllib.quote_plus(query),
+                "icon": self.OS.cwd() + "/../../icons/github.png"
+            }]
+        elif re.search('^maps ', query):
+            query = re.sub("^maps ", "", query)
+            self.search_results = [{
+                "name": "Search Maps for \"" + query + "\"",
+                "command": self.OS.cwd() + "/../../bin/open_file https://www.google.com/maps/search/" + urllib.quote_plus(query),
+                "icon": self.OS.cwd() + "/../../icons/google.png"
+            }]
+        elif re.search('^wiki ', query):
+            query = re.sub("^wiki ", "", query)
+            self.search_results = [{
+                "name": "Search Wiki for \"" + query + "\"",
+                "command": self.OS.cwd() + "/../../bin/open_file https://en.wikipedia.org/w/index.php?search=" + urllib.quote_plus(query),
+                "icon": self.OS.cwd() + "/../../icons/wiki.png"
+            }]
+        elif re.search('^youtube ', query) or re.search('^yt ', query):
+            query = re.sub("^youtube ", "", query)
+            query = re.sub("^yt ", "", query)
+            self.search_results = [{
+                "name": "Search YouTube for \"" + query + "\"",
+                "command": self.OS.cwd() + "/../../bin/open_file https://www.youtube.com/results?search_query=" + urllib.quote_plus(query),
+                "icon": self.OS.cwd() + "/../../icons/youtube.png"
+            }]
+        elif re.search('^twitter ', query) or re.search('^twit ', query):
+            query = re.sub("^twit ", "", query)
+            query = re.sub("^twitter ", "", query)
+            self.search_results = [{
+                "name": "Search The Twits for \"" + query + "\"",
+                "command": self.OS.cwd() + "/../../bin/open_file https://twitter.com/search?q=" + urllib.quote_plus(query),
+                "icon": self.OS.cwd() + "/../../icons/twitter.png"
+            }]
+        elif re.search('^gmail ', query):
+            query = re.sub("^gmail ", "", query)
+            self.search_results = [{
+                "name": "Search Gmail for \"" + query + "\"",
+                "command": self.OS.cwd() + "/../../bin/open_file https://mail.google.com/mail/#search/" + urllib.quote_plus(query),
+                "icon": self.OS.cwd() + "/../../icons/gmail.png"
+            }]
+        elif re.search('^torrentz ', query) or re.search('^tz ', query):
+            query = re.sub("^tz ", "", query)
+            query = re.sub("^torrentz ", "", query)
+            self.search_results = [{
+                "name": "Search Torrentz for \"" + query + "\"",
+                "command": self.OS.cwd() + "/../../bin/open_file https://torrentz.eu/search?q=" + urllib.quote_plus(query),
+                "icon": self.OS.cwd() + "/../../icons/torrentz.png"
             }]
         else:
             app_results = self.search_apps(query)

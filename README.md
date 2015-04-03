@@ -2,6 +2,17 @@
 
 App launcher that doesn't aim for being Ultra Shitty. Python, GTK, bash, sqlite, kittens.
 
+Supports basic search for:
+
+    Google
+    Youtube
+    Wiki
+    4chan
+    Github
+    Google Maps
+    Gmail
+    torrentz
+    Twitter
 
 ## screenshots
 
@@ -16,6 +27,9 @@ App launcher that doesn't aim for being Ultra Shitty. Python, GTK, bash, sqlite,
 
 ### Search for Piratables
 ![goto apps](docs/img/ducked_search.png)
+
+### The Chans
+![goto apps](docs/img/ducked_chans.png)
 
 
 ## dependencies
