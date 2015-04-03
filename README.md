@@ -11,7 +11,9 @@ Supports basic search for:
     Github
     Google Maps
     Gmail
-    torrentz
+    Torrentz
+    Python 2 & 3
+    PHP
     Twitter
 
 ## screenshots

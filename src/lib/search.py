@@ -135,6 +135,28 @@ class Search:
                 "command": self.OS.cwd() + "/../../bin/open_file https://torrentz.eu/search?q=" + urllib.quote_plus(query),
                 "icon": self.OS.cwd() + "/../../icons/torrentz.png"
             }]
+        elif re.search('^python ', query) or re.search('^py2 ', query):
+            query = re.sub("^py2 ", "", query)
+            query = re.sub("^python ", "", query)
+            self.search_results = [{
+                "name": "Search Python 2 ref for \"" + query + "\"",
+                "command": self.OS.cwd() + "/../../bin/open_file https://docs.python.org/2/search.html?q=" + urllib.quote_plus(query),
+                "icon": self.OS.cwd() + "/../../icons/python.png"
+            }]
+        elif re.search('^py3 ', query):
+            query = re.sub("^py3 ", "", query)
+            self.search_results = [{
+                "name": "Search Python 3 ref for \"" + query + "\"",
+                "command": self.OS.cwd() + "/../../bin/open_file https://docs.python.org/3/search.html?q=" + urllib.quote_plus(query),
+                "icon": self.OS.cwd() + "/../../icons/python.png"
+            }]
+        elif re.search('^php ', query):
+            query = re.sub("^php ", "", query)
+            self.search_results = [{
+                "name": "Search PHP ref for \"" + query + "\"",
+                "command": self.OS.cwd() + "/../../bin/open_file http://php.net/manual-lookup.php?pattern=" + urllib.quote_plus(query),
+                "icon": self.OS.cwd() + "/../../icons/php.png"
+            }]
         else:
             app_results = self.search_apps(query)
 
