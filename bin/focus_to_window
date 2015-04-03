@@ -4,6 +4,7 @@ window_title=$(./get_window_title $1)
 
 if [ "$window_title" != "" ]; then
 	xdotool set_desktop_viewport $(./get_window_offset $1) 0
-	sleep 1
+	sleep 0.2
+	$window_title=$(echo $window_title|tr ' ' '\ ')
 	wmctrl -a $window_title
 fi

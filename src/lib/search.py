@@ -1,10 +1,18 @@
 #!/usr/bin/env python
 
 from src.lib.os_handler import OSHandler
+from src.lib.indexer import Indexer
+from src.models.app import App
+# from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
+from operator import itemgetter, attrgetter, methodcaller
+import re
+import urllib
 
 class Search:
 
     OS = OSHandler()
+    App = App()
     search_results = []
 
     def signal_changed(self, Window, widget):
@@ -14,14 +22,13 @@ class Search:
         if len(query) > 0:
             Window.redraw_listview()
 
-            print query
             search_results = self.search(query)
-            print search_results
 
             for index in range(0,6):
                 if index < len(search_results):
                     app = search_results[index]
-                    Window.append_to_listview(app["name"], "/home/tim-en-bren/apps/intellij/bin/idea.png", "", app["command"])
+
+                    Window.append_to_listview(app["name"], app["icon"], "", app["command"])
         else:
             Window.clear_listview()
 
@@ -31,32 +38,85 @@ class Search:
 
         if len(self.search_results) > 0:
             app = self.search_results[0]
-            print "Go to " + app["name"]
+            Application = App()
+            Application.app_is_selected(app["name"])
             self.OS.goto_app(app["command"])
 
     def signal_goto_app_name(self, app_name):
-        app = self.get_app_by_name(app_name)
+        Application = App()
+        app = Application.get_by_name(app_name)
 
         if app:
+            Application = App()
+            Application.app_is_selected(app["name"])
             self.OS.goto_app(app["command"])
 
     def search(self, query):
-        """Search through apps"""
+        """Search for anything the user wants"""
 
-        query = query.lower()
-        apps = self.OS.get_all_apps()
-        self.search_results = []
+        # is a dir/file kind of syntaxy goodness?
+        if re.search('^[~]*[/]+', query):
+            self.search_results = [{
+                "name": "open " + query,
+                "command": self.OS.cwd() + "/../../bin/open_file " + query,
+                "icon": ""
+            }]
+        # does this search query look particularly calculatey?
+        elif re.search('^[\(\)0-9\. ]{1}[\(\)0-9\. +\/%\^\*\-]+[\(\)0-9\. ]{1}$', query):
 
-        for app in apps:
-            if app["name"][:len(query)].lower() == query:
-                self.search_results.append(app)
+            fallback_search_results = self.search_apps("calculator")
+            if len(fallback_search_results) > 0:
+                fallback_command = fallback_search_results[0]
+            else:
+                fallback_command = ""
+
+            self.search_results = [{
+                "name": self.OS.run_command('echo "scale=10; ' + query + '" | bc'),
+                "command": fallback_command,
+                "icon": ""
+            }]
+        else:
+            app_results = self.search_apps(query)
+
+            if len(app_results) > 0:
+                self.search_results = app_results
+            else:
+                self.search_results = [{
+                   "name": "Search for \"" + query + "\"",
+                   "command": self.OS.cwd() + "/../../bin/open_file https://www.google.com/search?q=" + urllib.quote_plus(query),
+                   "icon": self.OS.cwd() + "/../../icons/google.png"
+                }]
 
         return self.search_results
 
-    def get_app_by_name(self, app_name):
+    def search_apps(self, query):
 
-        apps = self.OS.get_all_apps()
+        apps = self.App.get_all()
+
+        app_names = []
+        app_findables = {}
 
         for app in apps:
-            if app["name"] == app_name:
-                return app
+            app_names.append(app["name"])
+            app_findables[app["name"]] = app
+
+        # just a list of names
+        fuzzy_results = process.extract(query, app_names, limit=7)
+        print fuzzy_results
+        # convert the list of names into a list of objects
+        search_results = []
+
+        ratio_best_hit = None
+
+        for result in fuzzy_results:
+            found_app_name = result[0]
+            ratio = result[1]
+
+            if ratio_best_hit == None:
+                ratio_best_hit = ratio
+
+            if ratio > 60 and ratio > (ratio_best_hit - (ratio_best_hit / 3)) and (not " " in query or found_app_name[0:len(query)].lower() == query.lower()):
+                search_results.append(app_findables[found_app_name])
+
+        search_results = sorted(search_results, key=itemgetter('selected'), reverse=True)
+        return search_results

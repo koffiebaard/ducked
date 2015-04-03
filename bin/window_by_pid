@@ -1,3 +1,11 @@
 #!/bin/bash
+pid=$(ps aux | grep -i $1 | grep -v grep | awk '{print $2}' | head -n1)
 
-wmctrl -lp | grep $(ps aux | grep -i $1 | grep -v grep | awk '{print $2}' | head -n1)
+if [ "$pid" != "" ]; then
+    app=$(wmctrl -lp | grep $pid)
+
+    if [ "$app" != "" ]; then
+        app_id=$(echo $app | awk '{print $1}')
+        wmctrl -l | grep $app_id
+    fi
+fi

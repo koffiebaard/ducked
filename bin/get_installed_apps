@@ -7,14 +7,14 @@ first_run=false
 IFS=$'\n'
 for app_dir in $(ls -X1 ~/.local/share/applications/*.desktop && ls -X1 /usr/share/applications/*.desktop); do
 
-	app_name=$(cat $app_dir | egrep ^Name= | cut -d = -f2 | tr '"' "'")
-	app_icon=$(cat $app_dir | grep Icon | cut -d = -f2 | tr '"' "'")
-	app_command=$(cat $app_dir | grep Exec | cut -d = -f2 | tr '"' "'")
-	app_onlyshowin=$(cat $app_dir | grep OnlyShowIn | cut -d = -f2 | tr '"' "'")
+	app_name=$(cat $app_dir | egrep ^Name= | cut -d = -f2 | tr '"' "'" | head -n1)
+	app_icon=$(cat $app_dir | egrep ^Icon= | cut -d = -f2 | tr '"' "'" | head -n1)
+	app_command=$(cat $app_dir | egrep ^Exec= | sed 's/Exec=//g' | tr '"' "'" | head -n1)
+	app_onlyshowin=$(cat $app_dir | egrep ^OnlyShowIn= | cut -d = -f2 | tr '"' "'" | head -n1)
 
-	if [ "$app_onlyshowin" != "" ]; then
-		continue
-	fi
+#	if [ "$app_onlyshowin" != "" ]; then
+#		continue
+#	fi
 
 	if [ $first_run == false ]; then
 		first_run=true
