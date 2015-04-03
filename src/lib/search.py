@@ -157,6 +157,13 @@ class Search:
                 "command": self.OS.cwd() + "/../../bin/open_file http://php.net/manual-lookup.php?pattern=" + urllib.quote_plus(query),
                 "icon": self.OS.cwd() + "/../../icons/php.png"
             }]
+        elif re.search('^http[s]{0,1}:\/\/.+', query):
+            query = re.sub("^php ", "", query)
+            self.search_results = [{
+                "name": "goto " + query + "",
+                "command": self.OS.cwd() + "/../../bin/open_file " + query,
+                "icon": self.OS.cwd() + "/../../icons/web.png"
+            }]
         else:
             app_results = self.search_apps(query)
 
