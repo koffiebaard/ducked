@@ -1,6 +1,6 @@
 # Ducked
 
-App switcher that is not Ultra Shitty. Python, GTK, bash, sqlite. 
+App launcher that doesn't aim for being Ultra Shitty. Python, GTK, bash, sqlite, kittens.
 
 
 ## screenshots
