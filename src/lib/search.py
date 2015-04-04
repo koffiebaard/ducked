@@ -8,6 +8,7 @@ from fuzzywuzzy import process
 from operator import itemgetter, attrgetter, methodcaller
 import re
 import urllib
+import random
 
 class Search:
 
@@ -135,7 +136,7 @@ class Search:
                 "command": self.OS.cwd() + "/../../bin/open_file https://torrentz.eu/search?q=" + urllib.quote_plus(query),
                 "icon": self.OS.cwd() + "/../../icons/torrentz.png"
             }]
-        elif re.search('^python ', query) or re.search('^py2 ', query):
+        elif re.search('^py2 ', query):
             query = re.sub("^py2 ", "", query)
             query = re.sub("^python ", "", query)
             self.search_results = [{
@@ -150,8 +151,8 @@ class Search:
                 "command": self.OS.cwd() + "/../../bin/open_file https://docs.python.org/3/search.html?q=" + urllib.quote_plus(query),
                 "icon": self.OS.cwd() + "/../../icons/python.png"
             }]
-        elif re.search('^php ', query):
-            query = re.sub("^php ", "", query)
+        elif re.search('^phpref ', query):
+            query = re.sub("^phpref ", "", query)
             self.search_results = [{
                 "name": "Search PHP ref for \"" + query + "\"",
                 "command": self.OS.cwd() + "/../../bin/open_file http://php.net/manual-lookup.php?pattern=" + urllib.quote_plus(query),
@@ -163,6 +164,30 @@ class Search:
                 "name": "goto " + query + "",
                 "command": self.OS.cwd() + "/../../bin/open_file " + query,
                 "icon": self.OS.cwd() + "/../../icons/web.png"
+            }]
+        elif re.search('^b[o]+red$', query):
+
+            possible_time_spendature = [
+                "https://en.wikipedia.org/wiki/List_of_common_misconceptions",
+                "https://en.wikipedia.org/wiki/Out-of-place_artifact",
+                "https://en.wikipedia.org/wiki/Category:Anomalous_weather",
+                "https://en.wikipedia.org/wiki/List_of_people_who_disappeared_mysteriously",
+                "https://boards.4chan.org/b/",
+                "https://en.wikipedia.org/wiki/Turritopsis_dohrnii",
+                "https://en.wikipedia.org/wiki/Ophiocordyceps_unilateralis",
+                "https://www.youtube.com/watch?v=HEheh1BH34Q",
+                "https://en.wikipedia.org/wiki/Megatherium",
+                "https://en.wikipedia.org/wiki/Largest_organisms",
+                "https://en.wikipedia.org/wiki/Largest_prehistoric_animals",
+                "https://en.wikipedia.org/wiki/List_of_longest-living_organisms",
+                "https://en.wikipedia.org/wiki/Common_misunderstandings_of_genetics",
+                "https://xkcd.com",
+            ]
+
+            self.search_results = [{
+                "name": "Press enter.",
+                "command": self.OS.cwd() + "/../../bin/open_file " + random.choice(possible_time_spendature),
+                "icon": ""
             }]
         else:
             app_results = self.search_apps(query)
