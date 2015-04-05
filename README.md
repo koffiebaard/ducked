@@ -40,9 +40,27 @@ python
 
     pygtk
     https://github.com/seatgeek/fuzzywuzzy
-    python-Levenshtein
+    python-levenshtein
 
 shell
 
     xdotool
     wmctrl
+    
+    
+## Installation on Ubuntu
+
+### dependencies
+sudo pip install pygtk python-levenshtein fuzzywuzzy
+sudo apt-get install xdotool wmctrl
+
+### install app (directly from master)
+cd /usr/share
+git clone https://github.com/wisc/ducked.git
+
+### Launch
+
+python /usr/share/ducked/ducked.py
+
+This command can be used to attach a global shortcut. The first time it'll index all installed apps, so it might take
+ a few seconds to start.
