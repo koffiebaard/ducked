@@ -52,10 +52,12 @@ shell
 
 ### dependencies
 sudo pip install pygtk python-levenshtein fuzzywuzzy
+
 sudo apt-get install xdotool wmctrl
 
 ### install app (directly from master)
 cd /usr/share
+
 git clone https://github.com/wisc/ducked.git
 
 ### Launch
