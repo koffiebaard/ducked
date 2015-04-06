@@ -60,9 +60,11 @@ cd /usr/share
 
 git clone https://github.com/wisc/ducked.git
 
+ln -s /usr/share/ducked/ducked.py /usr/local/bin/ducked
+
 ### Launch
 
-python /usr/share/ducked/ducked.py
+$ ducked
 
 This command can be used to attach a global shortcut. The first time it'll index all installed apps, so it might take
  a few seconds to start.
