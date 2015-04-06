@@ -76,7 +76,7 @@ class Indexing:
 
         OS = OSHandler()
 
-        logo_pixbuf = gtk.gdk.pixbuf_new_from_file(OS.cwd() + "/../../icons/ducked.png")
+        logo_pixbuf = gtk.gdk.pixbuf_new_from_file(OS.cwd() + "/icons/ducked.png")
 
         self.indexing_logo = gtk.Image()
         self.indexing_logo.set_from_pixbuf(logo_pixbuf)

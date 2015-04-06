@@ -23,11 +23,11 @@ class DBHandler:
 
         OS = OSHandler()
         cwd = OS.cwd()
-        db_location = cwd + "/../../ducked.db"
+        db_location = cwd + "/ducked.db"
 
-        OS.run_command(cwd + "/../../bin/unlock_db " + db_location)
+        OS.run_command(cwd + "/bin/unlock_db " + db_location)
 
     def __init__(self):
         OS = OSHandler()
         cwd = OS.cwd()
-        self.conn = sqlite3.connect(cwd + '/../../ducked.db')
+        self.conn = sqlite3.connect(cwd + '/ducked.db')

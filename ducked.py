@@ -7,18 +7,16 @@ from src.gui.search import Search
 from src.gui.indexing import Indexing
 from src.lib.indexer import Indexer
 import sys
+from src.lib.log import Log
 
 class Ducked:
 
-    IndexingWindow = Indexing()
-    SearchWindow = Search()
     Index = Indexer()
 
-    def switchGUI(self):
-        self.IndexingWindow.remove()
-        self.SearchWindow.draw()
-
     def __init__(self):
+
+        CustomLog = Log()
+        CustomLog.setup_custom_logger('ducked')
 
         # API stuff, no GUI
         if "--reindex" in sys.argv:
@@ -26,15 +24,19 @@ class Ducked:
             sys.exit(0)
         # No API stuff, so do the GUI
         else:
+
+            IndexingWindow = Indexing()
+            SearchWindow = Search()
+
             if self.Index.needs_synchronization():
-                self.IndexingWindow.draw()
+                IndexingWindow.draw()
 
-                self.Index.index_apps()
+                Index.index_apps()
 
-                self.IndexingWindow.remove()
-                self.SearchWindow.draw()
+                IndexingWindow.remove()
+                SearchWindow.draw()
             else:
-                self.SearchWindow.draw()
+                SearchWindow.draw()
 
     def main(self):
         gtk.main()

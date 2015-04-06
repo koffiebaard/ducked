@@ -8,6 +8,8 @@ import os
 from src.lib.search import Search
 from src.lib.os_handler import OSHandler
 from src.lib.db_handler import DBHandler
+import logging
+logger = logging.getLogger('ducked')
 
 class Search:
 
@@ -32,6 +34,7 @@ class Search:
             # Pressed escape after querying and the app results skipped to Google.
             # Probably didn't find something a new app, so reindex
             if "Search" in app_name:
+                logger.info("Escape pressed with no search results. Reindexing apps.")
                 self.window.destroy()
                 OS = OSHandler()
                 OS.run_command_forked("ducked --reindex")
@@ -204,10 +207,10 @@ class Search:
             if icon:
                 icon_location = icon.get_filename()
             else:
-                icon_location = OS.cwd() + "/../../icons/ducked.png"
+                icon_location = OS.cwd() + "/icons/ducked.png"
 
         if os.path.isfile(icon_location) == False:
-            icon_location = OS.cwd() + "/../../icons/ducked.png"
+            icon_location = OS.cwd() + "/icons/ducked.png"
 
         return icon_location
 

@@ -3,8 +3,6 @@
 import os,json
 from subprocess import Popen, PIPE
 
-cwd = os.path.dirname(os.path.realpath(__file__))
-
 class OSHandler:
 
     installed_apps = []
@@ -20,7 +18,7 @@ class OSHandler:
 
     def get_installed_apps(self):
         if len(self.installed_apps) == 0:
-            self.installed_apps = os.popen(cwd + "/../../bin/get_installed_apps").read()
+            self.installed_apps = os.popen(self.cwd() + "/bin/get_installed_apps").read()
 
             if len(self.installed_apps) > 0:
                 self.installed_apps = json.loads(self.installed_apps)
@@ -29,7 +27,7 @@ class OSHandler:
 
     def get_apps_from_plugin(self, plugin):
 
-        plugin_apps = os.popen(cwd + "/../../plugins/" + plugin).read()
+        plugin_apps = os.popen(self.cwd() + "/plugins/" + plugin).read()
 
         plugin_apps = json.loads(plugin_apps)
         self.installed_apps.extend(plugin_apps)
@@ -50,4 +48,10 @@ class OSHandler:
         Popen(command, shell=True)
 
     def cwd(self):
-        return os.path.dirname(os.path.realpath(__file__))
+        cwd = os.path.dirname(os.path.realpath(__file__)) + "/../.."
+        return cwd
+
+    def cleanup_logs(self):
+        log_location = self.cwd() + "/message.log"
+        last_n_lines = 3040
+        self.run_command(self.cwd() + "/bin/cleanup_logs " + log_location + " " + str(last_n_lines))

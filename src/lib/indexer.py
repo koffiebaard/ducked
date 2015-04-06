@@ -4,6 +4,8 @@
 from src.lib.os_handler import OSHandler
 from src.models.app import App
 from src.models.meta import Meta
+import logging
+logger = logging.getLogger('ducked')
 
 class Indexer:
 
@@ -19,15 +21,19 @@ class Indexer:
 
         initial_sync_completed = self.Meta.get("initial_sync_completed")
         if initial_sync_completed == None or initial_sync_completed["value"] == 0:
+            logger.info("Initial sync required.")
             return True
         else:
             return False
 
     def index_apps(self):
 
+        logger.info("Begin indexing apps.")
         self.index_installed_apps()
         self.index_plugin_apps()
         self.Meta.set("initial_sync_completed", 1)
+        logger.info("Finish indexing apps.")
+        self.OS.cleanup_logs()
 
     def index_installed_apps(self):
         installed_apps = self.OS.get_installed_apps()
