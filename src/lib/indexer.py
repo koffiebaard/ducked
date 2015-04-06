@@ -50,8 +50,10 @@ class Indexer:
         if plugin_apps != None:
             for app in plugin_apps:
                 Application = App()
-                Application.name = app["name"]
-                Application.icon = app["icon"]
-                Application.command = app["command"]
-                Application.source = plugin
-                Application.save()
+
+                if Application.get_by_name(app["name"]) == None:
+                    Application.name = app["name"]
+                    Application.icon = app["icon"]
+                    Application.command = app["command"]
+                    Application.source = plugin
+                    Application.save()

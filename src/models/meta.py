@@ -13,27 +13,34 @@ class Meta:
     def set(self, setting, value):
         data = (setting, value)
 
-        self.db.cursor.execute(
+        cursor = self.db.conn.cursor()
+        cursor.execute(
             "INSERT INTO meta "
             "(`setting`, `value`)"
             "VALUES"
             "(?, ?)",
             data
         )
-        return self.db.conn.commit()
+        result = self.db.conn.commit()
+        cursor.close()
+        return result
 
     def get(self, setting):
         conditions = (setting,)
-        self.db.cursor.execute("SELECT * FROM `meta` WHERE `setting` = ?", conditions)
-        result = self.db.cursor.fetchone()
+        cursor = self.db.conn.cursor()
+        cursor.execute("SELECT * FROM `meta` WHERE `setting` = ?", conditions)
+        result = cursor.fetchone()
+        cursor.close()
 
         if result != None:
             return {"setting": result[0], "value": result[1]}
 
     def create_table(self):
-        self.db.cursor.execute('''CREATE TABLE meta
+        cursor = self.db.conn.cursor()
+        cursor.execute('''CREATE TABLE meta
              (setting text, value text)''')
         self.db.conn.commit()
+        cursor.close()
 
     def __init__(self):
         self.db.make_sure_table_exists("meta", self.create_table)

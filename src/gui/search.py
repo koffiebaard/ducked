@@ -7,19 +7,21 @@ import pango
 import os
 from src.lib.search import Search
 from src.lib.os_handler import OSHandler
+from src.lib.db_handler import DBHandler
 
 class Search:
 
     Search = Search()
 
-    def destroy(self, widget, data=None):
+    def destroy(self, widget=None, data=None):
         """Destroy all the things"""
-        print "destroy all the things!"
+        DB = DBHandler()
+        DB.conn.close()
         gtk.main_quit()
 
     def shortcut_destroy(self, widget, AccelGroup, i, control_mask):
         """Destroy app through shortcut"""
-        gtk.main_quit()
+        self.destroy()
 
     def signal_changed(self,widget):
         """Signal on change for text entry. Searches for apps."""
@@ -29,7 +31,7 @@ class Search:
         """App selection through enter key on textview"""
         query = self.entry.get_text()
         self.Search.signal_goto_first_result(query)
-        gtk.main_quit()
+        self.destroy()
 
     def signal_enter_key(self, widget, event):
         """App selection through enter key on listview."""
@@ -38,7 +40,7 @@ class Search:
             if iter:
                 app_name = model.get_value(iter, 1)
                 self.Search.signal_goto_app_name(app_name)
-                gtk.main_quit()
+                self.destroy()
                 return True
         return False
 

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+kill $(fuser $1 | cut -d ':' -f2 | xargs)
+# kill $(ps aux | grep ducked.py | grep -v "grep" | awk '{print $2}' | awk -v RS= -v OFS=, '{$1 = $1} 1' | tr ',' ' ')

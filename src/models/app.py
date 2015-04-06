@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sqlite3
+import sys
 from src.lib.db_handler import DBHandler
 
 class App:
@@ -14,8 +14,10 @@ class App:
     source = ""
 
     def get_all(self):
-        self.db.cursor.execute("select * from `apps`")
-        tuple_list = self.db.cursor.fetchall()
+        cursor = self.db.conn.cursor()
+        cursor.execute("select * from `apps`")
+        tuple_list = cursor.fetchall()
+        cursor.close()
 
         resultset = []
         for tuple in tuple_list:
@@ -32,8 +34,10 @@ class App:
     def get_by_name(self, name):
         conditions = (name,)
 
-        self.db.cursor.execute("select * from `apps` where `name` = ?", conditions)
-        result = self.db.cursor.fetchone()
+        cursor = self.db.conn.cursor()
+        cursor.execute("select * from `apps` where `name` = ?", conditions)
+        result = cursor.fetchone()
+        cursor.close()
 
         if result != None:
             return {
@@ -53,30 +57,48 @@ class App:
             self.source
         )
 
-        self.db.cursor.execute(
+        cursor = self.db.conn.cursor()
+        cursor.execute(
             "INSERT INTO apps "
             "(`icon`, `name`, `command`, `selected`, `source`)"
             "VALUES"
             "(?, ?, ?, ?, ?)",
             data
         )
-        return self.db.conn.commit()
+
+        result = self.db.conn.commit()
+        cursor.close()
+
+        return result
 
     def app_is_selected(self, name):
         conditions = (
             name,
         )
 
-        self.db.cursor.execute(
-            "update apps set `selected` = `selected` + 1 where `name` = ?",
-            conditions
-        )
-        return self.db.conn.commit()
+        try:
+            cursor = self.db.conn.cursor()
+            cursor.execute(
+                "update apps set `selected` = `selected` + 1 where `name` = ?",
+                conditions
+            )
+            result = self.db.conn.commit()
+            cursor.close()
+            return result
+        except:
+            print sys.exc_info()[0]
+            print sys.exc_info()[1]
+            self.db.unlock_db()
+            pass
+
+        return False
 
     def create_table(self):
-        self.db.cursor.execute('''CREATE TABLE apps
+        cursor = self.db.conn.cursor()
+        cursor.execute('''CREATE TABLE apps
              (icon text, name text, command text, selected int, source text)''')
         self.db.conn.commit()
+        cursor.close()
 
     def __init__(self):
         self.db.make_sure_table_exists("apps", self.create_table)
