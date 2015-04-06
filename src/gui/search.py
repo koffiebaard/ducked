@@ -21,6 +21,21 @@ class Search:
 
     def shortcut_destroy(self, widget, AccelGroup, i, control_mask):
         """Destroy app through shortcut"""
+
+        # entered a search query, 1 result, pressed escape
+        # there's always Google as a result, chances are the user didn't find what they were looking for
+        # so reindex
+        if len(self.entry.get_text()) > 0 and self.liststore != None and len(self.liststore) == 1:
+            row = self.liststore[0]
+            app_name = row[1]
+
+            # Pressed escape after querying and the app results skipped to Google.
+            # Probably didn't find something a new app, so reindex
+            if "Search" in app_name:
+                self.window.destroy()
+                OS = OSHandler()
+                OS.run_command_forked("ducked --reindex")
+
         self.destroy()
 
     def signal_changed(self,widget):

@@ -44,5 +44,10 @@ class OSHandler:
         print command
         return os.popen(command).read()
 
+    def run_command_forked(self, command):
+        command += " &"
+        print command
+        Popen(command, shell=True)
+
     def cwd(self):
         return os.path.dirname(os.path.realpath(__file__))

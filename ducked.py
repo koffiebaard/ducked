@@ -20,19 +20,21 @@ class Ducked:
 
     def __init__(self):
 
-        if self.Index.needs_synchronization():
-            self.IndexingWindow.draw()
-
+        # API stuff, no GUI
+        if "--reindex" in sys.argv:
             self.Index.index_apps()
-
-            self.IndexingWindow.remove()
-            self.SearchWindow.draw()
+            sys.exit(0)
+        # No API stuff, so do the GUI
         else:
+            if self.Index.needs_synchronization():
+                self.IndexingWindow.draw()
 
-            if "--reindex" in sys.argv:
                 self.Index.index_apps()
 
-            self.SearchWindow.draw()
+                self.IndexingWindow.remove()
+                self.SearchWindow.draw()
+            else:
+                self.SearchWindow.draw()
 
     def main(self):
         gtk.main()
