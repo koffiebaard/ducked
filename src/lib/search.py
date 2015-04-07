@@ -1,17 +1,20 @@
 #!/usr/bin/env python
 
+import re, urllib, random, json
+
 from src.lib.os_handler import OSHandler
 from src.lib.indexer import Indexer
 from src.models.app import App
-from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
 from operator import itemgetter, attrgetter, methodcaller
-import re
-import urllib
-import random
+
 import logging
-import json
 logger = logging.getLogger('ducked')
+
+try:
+    # from fuzzywuzzy import fuzz
+    from fuzzywuzzy import process
+except ImportError:
+    pass
 
 class Search:
 
@@ -256,10 +259,15 @@ class Search:
                 if re.search(query.lower(), app_name.lower()):
                     result = (app_name,100)
                     app_results.append(result)
-        # Otherwise do fuzzy search
-        else:
+        # Otherwise do fuzzy search (if the module is present)
+        elif process:
             # just a list of names
             app_results = process.extract(query, app_names, limit=7)
+        else:
+            for app_name in app_names:
+                if query.lower() in app_name.lower():
+                    result = (app_name,100)
+                    app_results.append(result)
 
         # convert the list of names into a list of objects
         search_results = []
