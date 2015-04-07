@@ -4,6 +4,8 @@
 from src.lib.os_handler import OSHandler
 from src.models.app import App
 from src.models.meta import Meta
+from os import listdir
+from os.path import isfile, join
 import logging
 logger = logging.getLogger('ducked')
 
@@ -49,17 +51,19 @@ class Indexer:
                 Application.save()
 
     def index_plugin_apps(self):
-        plugin = "phpstorm"
+        plugin_path = self.OS.cwd() + "/plugins/indexables/"
+        plugins = [ f for f in listdir(plugin_path) if isfile(join(plugin_path,f)) ]
 
-        plugin_apps = self.OS.get_apps_from_plugin(plugin)
+        for plugin in plugins:
+            plugin_apps = self.OS.get_apps_from_plugin(plugin)
 
-        if plugin_apps != None:
-            for app in plugin_apps:
-                Application = App()
+            if plugin_apps != None:
+                for app in plugin_apps:
+                    Application = App()
 
-                if Application.get_by_name(app["name"]) == None:
-                    Application.name = app["name"]
-                    Application.icon = app["icon"]
-                    Application.command = app["command"]
-                    Application.source = plugin
-                    Application.save()
+                    if Application.get_by_name(app["name"]) == None:
+                        Application.name = app["name"]
+                        Application.icon = app["icon"]
+                        Application.command = app["command"]
+                        Application.source = plugin
+                        Application.save()

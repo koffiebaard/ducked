@@ -27,7 +27,7 @@ class OSHandler:
 
     def get_apps_from_plugin(self, plugin):
 
-        plugin_apps = os.popen(self.cwd() + "/plugins/" + plugin).read()
+        plugin_apps = os.popen(self.cwd() + "/plugins/indexables/" + plugin).read()
 
         plugin_apps = json.loads(plugin_apps)
         self.installed_apps.extend(plugin_apps)

@@ -31,7 +31,7 @@ class Ducked:
             if self.Index.needs_synchronization():
                 IndexingWindow.draw()
 
-                Index.index_apps()
+                self.Index.index_apps()
 
                 IndexingWindow.remove()
                 SearchWindow.draw()

@@ -3,13 +3,14 @@
 from src.lib.os_handler import OSHandler
 from src.lib.indexer import Indexer
 from src.models.app import App
-# from fuzzywuzzy import fuzz
+from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 from operator import itemgetter, attrgetter, methodcaller
 import re
 import urllib
 import random
 import logging
+import json
 logger = logging.getLogger('ducked')
 
 class Search:
@@ -167,6 +168,20 @@ class Search:
                 "command": self.OS.cwd() + "/bin/open_file " + query,
                 "icon": self.OS.cwd() + "/icons/web.png"
             }]
+        elif re.search('^sup$', query):
+            spotify_whats_playing = self.OS.run_command(self.OS.cwd() + "/plugins/searchables/spotify_whats_playing")
+            self.search_results = [{
+                "name": spotify_whats_playing.strip(),
+                "command": "",
+                "icon": "spotify-client"
+            }]
+        elif re.search('^cb ', query):
+            query = re.sub("^cb ", "", query)
+
+            results = self.OS.run_command(self.OS.cwd() + "/plugins/searchables/search_chrome_bookmarks " + query)
+            print json.loads(results.strip())
+            self.search_results = json.loads(results)
+
         elif re.search('^b[o]+red$', query):
 
             logger.info("Awesooooome. Someone is bored! ^^")
