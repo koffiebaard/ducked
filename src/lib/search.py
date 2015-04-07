@@ -82,9 +82,9 @@ class Search:
                 fallback_command = ""
 
             self.search_results = [{
-                "name": self.OS.run_command('echo "scale=10; ' + query + '" | bc'),
+                "name": self.OS.run_command('echo "scale=10; ' + query + '" | bc').strip(),
                 "command": fallback_command,
-                "icon": ""
+                "icon": self.OS.cwd() + "/icons/calc.png"
             }]
         elif re.search('^github ', query) or re.search('^gh ', query):
             query = re.sub("^github ", "", query)
@@ -160,8 +160,12 @@ class Search:
                 "command": self.OS.cwd() + "/bin/open_file http://php.net/manual-lookup.php?pattern=" + urllib.quote_plus(query),
                 "icon": self.OS.cwd() + "/icons/php.png"
             }]
-        elif re.search('^http[s]{0,1}:\/\/.+', query):
+        elif re.search('^http[s]{0,1}:\/\/.+|[a-zA-Z]+\.[a-zA-Z]{2,5}', query):
             query = re.sub("^php ", "", query)
+
+            if re.search('^http[s]{0,1}:\/\/.+', query) == None:
+                query = "http://" + query
+
             self.search_results = [{
                 "name": "goto " + query + "",
                 "command": self.OS.cwd() + "/bin/open_file " + query,
@@ -252,12 +256,10 @@ class Search:
                 if re.search(query.lower(), app_name.lower()):
                     result = (app_name,100)
                     app_results.append(result)
-            print app_results
         # Otherwise do fuzzy search
         else:
             # just a list of names
             app_results = process.extract(query, app_names, limit=7)
-            print app_results
 
         # convert the list of names into a list of objects
         search_results = []

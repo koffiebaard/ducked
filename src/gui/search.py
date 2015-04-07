@@ -104,7 +104,7 @@ class Search:
         """Draw the search box on the window"""
 
         self.entry = gtk.Entry()
-        self.entry.set_size_request(650,100)
+        self.entry.set_size_request(450,100)
 
         self.entry.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("#ffffff"))
         self.entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#ffffff"))
@@ -117,9 +117,21 @@ class Search:
         self.entry.set_has_frame(0)
 
         # Taaaaable
-        self.table = gtk.Table(1, 2, True)
+        self.table = gtk.Table(2, 2, True)
         self.table.set_homogeneous(False)
         self.table.attach(self.entry, 0, 1, 0, 1)
+
+        OS = OSHandler()
+
+        logo_pixbuf = gtk.gdk.pixbuf_new_from_file(OS.cwd() + "/icons/ducked.png")
+
+        self.logo = gtk.Image()
+        self.logo.set_from_pixbuf(logo_pixbuf)
+
+        # Taaaaable
+        self.table.attach(self.logo, 1, 2, 0, 1)
+
+
         self.window.add(self.table)
         self.window.set_focus(self.entry)
 
@@ -133,9 +145,6 @@ class Search:
         self.tvcolumn = gtk.TreeViewColumn('')
         self.treeview.append_column(self.tvcolumn)
 
-        # Create column 2
-        self.tvcolumn1 = gtk.TreeViewColumn('')
-        self.treeview.append_column(self.tvcolumn1)
 
         # Render Icon
         self.cellpb = gtk.CellRendererPixbuf()
@@ -154,22 +163,23 @@ class Search:
         # self.tvcolumn.set_attributes(self.cell, text=0)
         self.tvcolumn.add_attribute(self.cell, 'text', 1)
 
-        # Render shortcut
-        self.cell1 = gtk.CellRendererText()
-        self.cell1.set_property('cell-background', '#ffffff')
-        self.tvcolumn1.pack_start(self.cell1, True)
-        self.tvcolumn1.set_attributes(self.cell1, text=2)
+        # self.cell_shortcut = gtk.CellRendererText()
+        # font_description = pango.FontDescription('Lucida Sans %s' % 21)
+        # self.cell_shortcut.set_property('font-desc', font_description)
+        # self.cell_shortcut.set_property('cell-background', '#ffffff')
+        # self.cell_shortcut.set_property('foreground', '#525252')
+        # self.tvcolumn.pack_start(self.cell_shortcut, True)
+        # self.tvcolumn.add_attribute(self.cell_shortcut, 'text', 2)
 
         self.treeview.set_headers_visible(False)
 
         self.tvcolumn.set_resizable(True)
-        self.tvcolumn1.set_resizable(True)
 
         self.treeview.set_cursor(0)
         self.treeview.get_selection().set_mode(gtk.SELECTION_BROWSE)
         self.window.connect('key-press-event', self.signal_enter_key)
 
-        self.table.attach(self.treeview, 0, 1, 1, 2)
+        self.table.attach(self.treeview, 0, 2, 1, 2)
         self.window.resize(1,1)
 
     def remove_listview(self):
@@ -189,7 +199,6 @@ class Search:
 
     def append_to_listview(self, app_name, icon_name, shortcut, command):
         self.treeview.show()
-
         icon_location = self.translate_icon_to_path(icon_name)
 
         self.liststore.append([gtk.gdk.pixbuf_new_from_file_at_size(icon_location, 48, 48), app_name, shortcut, True])
@@ -207,10 +216,10 @@ class Search:
             if icon:
                 icon_location = icon.get_filename()
             else:
-                icon_location = OS.cwd() + "/icons/ducked.png"
+                icon_location = OS.cwd() + "/icons/icon_not_found.png"
 
         if os.path.isfile(icon_location) == False:
-            icon_location = OS.cwd() + "/icons/ducked.png"
+            icon_location = OS.cwd() + "/icons/icon_not_found.png"
 
         return icon_location
 
