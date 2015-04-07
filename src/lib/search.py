@@ -139,16 +139,15 @@ class Search:
                 "command": self.OS.cwd() + "/bin/open_file https://torrentz.eu/search?q=" + urllib.quote_plus(query),
                 "icon": self.OS.cwd() + "/icons/torrentz.png"
             }]
-        elif re.search('^py2 ', query):
-            query = re.sub("^py2 ", "", query)
-            query = re.sub("^python ", "", query)
+        elif re.search('^py2ref ', query):
+            query = re.sub("^py2ref ", "", query)
             self.search_results = [{
                 "name": "Search Python 2 ref for \"" + query + "\"",
                 "command": self.OS.cwd() + "/bin/open_file https://docs.python.org/2/search.html?q=" + urllib.quote_plus(query),
                 "icon": self.OS.cwd() + "/icons/python.png"
             }]
-        elif re.search('^py3 ', query):
-            query = re.sub("^py3 ", "", query)
+        elif re.search('^py3ref ', query):
+            query = re.sub("^py3ref ", "", query)
             self.search_results = [{
                 "name": "Search Python 3 ref for \"" + query + "\"",
                 "command": self.OS.cwd() + "/bin/open_file https://docs.python.org/3/search.html?q=" + urllib.quote_plus(query),
@@ -220,6 +219,7 @@ class Search:
                 "icon": ""
             }]
         else:
+
             app_results = self.search_apps(query)
 
             if len(app_results) > 0:
@@ -244,15 +244,27 @@ class Search:
             app_names.append(app["name"])
             app_findables[app["name"]] = app
 
-        # just a list of names
-        fuzzy_results = process.extract(query, app_names, limit=7)
-        print fuzzy_results
+        # Is it regexy?
+        if re.search("^\^|^\[|\$$|\.[\*|+]|\|", query):
+            print "arr"
+            app_results = []
+            for app_name in app_names:
+                if re.search(query.lower(), app_name.lower()):
+                    result = (app_name,100)
+                    app_results.append(result)
+            print app_results
+        # Otherwise do fuzzy search
+        else:
+            # just a list of names
+            app_results = process.extract(query, app_names, limit=7)
+            print app_results
+
         # convert the list of names into a list of objects
         search_results = []
 
         ratio_best_hit = None
 
-        for result in fuzzy_results:
+        for result in app_results:
             found_app_name = result[0]
             ratio = result[1]
 
