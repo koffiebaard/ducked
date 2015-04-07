@@ -185,6 +185,18 @@ class Search:
                 "https://en.wikipedia.org/wiki/List_of_longest-living_organisms",
                 "https://en.wikipedia.org/wiki/Common_misunderstandings_of_genetics",
                 "https://xkcd.com",
+                "https://en.wikipedia.org/wiki/List_of_backmasked_messages",
+                "https://en.wikipedia.org/wiki/Spongiforma_squarepantsii",
+                "https://en.wikipedia.org/wiki/Berlin_Gold_Hat",
+                "https://en.wikipedia.org/wiki/Timeline_of_the_evolutionary_history_of_life",
+                "https://en.wikipedia.org/wiki/Solid_oxygen",
+                "http://m.space.com/19865-how-to-make-a-peanut-butter-and-honey-sandwich-in-space-video.html",
+                "https://en.wikipedia.org/wiki/Alpheidae",
+                "https://en.wikipedia.org/wiki/Scolopendra_gigantea",
+                "http://hubblesite.org/gallery/album/",
+                "http://space-facts.com/mars-panorama/",
+                "https://en.wikipedia.org/wiki/Microraptor",
+                "https://en.wikipedia.org/wiki/Archelon"
             ]
 
             self.search_results = [{
