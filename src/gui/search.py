@@ -203,6 +203,41 @@ class Search:
 
         self.liststore.append([gtk.gdk.pixbuf_new_from_file_at_size(icon_location, 48, 48), app_name, shortcut, True])
 
+    def draw_webview(self, content):
+
+        self.web_buffer = gtk.TextBuffer()
+        self.web_buffer.set_text(content)
+
+        self.webview = gtk.TextView()
+        self.webview.set_buffer(self.web_buffer)
+        self.webview.set_cursor_visible(False)
+        self.webview.set_wrap_mode(gtk.WRAP_WORD)
+        self.webview.set_editable(False)
+
+        self.table.attach(self.webview, 0, 2, 1, 2)
+        self.webview.show()
+        self.window.resize(1,1)
+
+    def remove_webview(self):
+        if hasattr(self, "webview"):
+            self.table.remove(self.webview)
+            self.webview = None
+        self.window.resize(1,1)
+
+    def switch_to_web(self, content):
+        self.remove_listview()
+        self.draw_webview(content)
+
+    def switch_to_list(self):
+        self.remove_webview()
+        self.redraw_listview()
+
+    def ensure_list_visibility(self):
+        if hasattr(self, "webview") and self.webview != None:
+            self.switch_to_list()
+        else:
+            self.redraw_listview()
+
     def translate_icon_to_path(self, icon_name):
 
         OS = OSHandler()

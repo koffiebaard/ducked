@@ -27,15 +27,20 @@ class Search:
         query = Window.entry.get_text()
 
         if len(query) > 0:
-            Window.redraw_listview()
 
             search_results = self.search(query)
 
-            for index in range(0,6):
-                if index < len(search_results):
-                    app = search_results[index]
+            if type(search_results) is dict:
+                Window.switch_to_web(search_results["content"])
+            else:
 
-                    Window.append_to_listview(app["name"], app["icon"], "", app["command"])
+                Window.ensure_list_visibility()
+
+                for index in range(0,6):
+                    if index < len(search_results):
+                        app = search_results[index]
+
+                        Window.append_to_listview(app["name"], app["icon"], "", app["command"])
         else:
             Window.clear_listview()
 
@@ -43,7 +48,9 @@ class Search:
         """Go to result"""
         self.search(query)
 
-        if len(self.search_results) > 0:
+        if type(self.search_results) is dict:
+            self.OS.goto_app(self.search_results["command"])
+        elif len(self.search_results) > 0:
             app = self.search_results[0]
             Application = App()
             Application.app_is_selected(app["name"])
@@ -187,6 +194,12 @@ class Search:
             results = self.OS.run_command(self.OS.cwd() + "/plugins/searchables/search_chrome_bookmarks " + query)
             print json.loads(results.strip())
             self.search_results = json.loads(results)
+        elif re.search('^wotd$', query):
+
+            self.search_results = {
+                "content": "Wotd wotd?",
+                "command": ""
+            }
 
         elif re.search('^b[o]+red$', query):
 
