@@ -16,6 +16,9 @@ Supports basic search for:
     PHP
     Twitter
 
+It also acts as a calculator, allows you to browse to websites immediately by entering a URL, and it has a plugin system
+for you to extend functionalities as you see fit.
+
 ## screenshots
 
 ### Goto apps
