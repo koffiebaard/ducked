@@ -26,6 +26,7 @@ class Indexing:
             self.window.add_accel_group(self.my_accelerators)
 
     def draw(self):
+	"""Draws the entire window and everything in it"""
         self.draw_window()
         self.draw_text()
         self.draw_logo()
