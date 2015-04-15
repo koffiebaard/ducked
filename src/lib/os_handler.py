@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os,json
+import os, json, re
 from subprocess import Popen, PIPE
 
 class OSHandler:
@@ -34,6 +34,7 @@ class OSHandler:
         return plugin_apps
 
     def goto_app(self, command):
+        command = re.sub(' %[a-zA-Z0-9]+', '', command)
         command += " &"
         print command
         os.popen(command)
