@@ -254,7 +254,10 @@ class Search:
                 icon_location = OS.cwd() + "/icons/icon_not_found.png"
 
         if os.path.isfile(icon_location) == False:
-            icon_location = OS.cwd() + "/icons/icon_not_found.png"
+            if os.path.isfile("/usr/share/icons/" + icon_location) == True:
+                icon_location = "/usr/share/icons/" + icon_location
+            else:
+                icon_location = OS.cwd() + "/icons/icon_not_found.png"
 
         return icon_location
 

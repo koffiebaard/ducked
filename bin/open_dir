@@ -2,8 +2,8 @@
 
 if which xdg-open > /dev/null
 then
-  xdg-open $1
+  xdg-open "$@"
 elif which gnome-open > /dev/null
 then
-  gnome-open $1
+  gnome-open "$@"
 fi

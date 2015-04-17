@@ -13,7 +13,7 @@ for project_dir in $project_dirs; do
     for project in $(ls -X1 $project_dir); do
 
             app_name=$(basename $project)
-            app_icon=
+            app_icon="/usr/share/icons/hicolor/256x256/apps/phpstorm.png"
             app_command="cd $project_dir && pstorm $project"
 
             if [ $first_run == false ]; then
