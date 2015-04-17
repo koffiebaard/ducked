@@ -1,0 +1,35 @@
+#!/bin/bash
+
+cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+echo "["
+
+workdocument_dirs=~/workdocuments
+
+first_run=false
+
+IFS=","
+for workdocument_dir in $workdocument_dirs; do
+
+    IFS=$'\n'
+    for workdocument in $(ls -X1 $workdocument_dir); do
+
+            name=$workdocument
+            icon="accessories-text-editor"
+            command="$cwd/../../bin/open_file \\\"$workdocument_dir/$workdocument\\\""
+
+            if [ $first_run == false ]; then
+                    first_run=true
+            else
+                    echo ","
+            fi
+
+            echo "{"
+                    echo \"name\": \"workdoc \'$name\'\",
+                    echo \"icon\": \"$icon\",
+                    echo \"command\": \"$command\"
+            echo "}"
+    done
+done
+
+echo "]"
