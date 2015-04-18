@@ -230,7 +230,8 @@ class Search:
                 "http://hubblesite.org/gallery/album/",
                 "http://space-facts.com/mars-panorama/",
                 "https://en.wikipedia.org/wiki/Microraptor",
-                "https://en.wikipedia.org/wiki/Archelon"
+                "https://en.wikipedia.org/wiki/Archelon",
+                "http://www.thesillywalk.com/"
             ]
 
             self.search_results = [{
