@@ -76,14 +76,6 @@ class DBMigration:
             self.WebSearchPlugin.create("^py2ref ", "", "Search Python 2 ref for \"{query}\"", "https://docs.python.org/2/search.html?q={query}", "resources/icons/python.png")
             self.WebSearchPlugin.create("^py3ref ", "", "Search Python 3 ref for \"{query}\"", "https://docs.python.org/3/search.html?q={query}", "resources/icons/python.png")
             self.WebSearchPlugin.create("^phpref ", "", "Search PHP ref for \"{query}\"", "http://php.net/manual-lookup.php?pattern={query}", "resources/icons/php.png")
-            self.WebSearchPlugin.create("", "", "{query}", "{query}", "")
-            self.WebSearchPlugin.create("", "", "{query}", "{query}", "")
-            self.WebSearchPlugin.create("", "", "{query}", "{query}", "")
-            self.WebSearchPlugin.create("", "", "{query}", "{query}", "")
-            self.WebSearchPlugin.create("", "", "{query}", "{query}", "")
-            self.WebSearchPlugin.create("", "", "{query}", "{query}", "")
-            self.WebSearchPlugin.create("", "", "{query}", "{query}", "")
-
 
 
         cursor.close()

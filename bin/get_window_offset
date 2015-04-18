@@ -1,5 +1,7 @@
 #!/bin/bash
 
-window_id=$(./get_window $1 | awk '{print $1}')
+cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+window_id=$($cwd/get_window $1 | awk '{print $1}')
 echo $(wmctrl -lG | grep "$window_id" | awk '{print $3}')
 

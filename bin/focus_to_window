@@ -1,10 +1,16 @@
 #!/bin/bash
 
-window_title=$(./get_window_title $1)
+
+cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+window_title=$($cwd/get_window_title $1)
 
 if [ "$window_title" != "" ]; then
-	xdotool set_desktop_viewport $(./get_window_offset $1) 0
+	xdotool set_desktop_viewport $($cwd/get_window_offset $1) 0
 	sleep 0.2
-	$window_title=$(echo $window_title|tr ' ' '\ ')
+	window_title=$(echo $window_title|tr ' ' '\ ')
 	wmctrl -a $window_title
+	echo "yarp"
+else
+    echo "narp"
 fi

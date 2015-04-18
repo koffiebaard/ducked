@@ -1,9 +1,11 @@
 #!/bin/bash
 
-pid_window=$(./window_by_pid $1)
+cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+pid_window=$($cwd/window_by_pid $1)
 
 if [ "$pid_window" != "" ]; then
         echo $pid_window
 else
-        echo $(./window_by_title $1)
+        echo $($cwd/window_by_title $1)
 fi

@@ -11,8 +11,10 @@ first_run=false
 IFS=","
 for workdocument_dir in $workdocument_dirs; do
 
-    IFS=$'\n'
-    for workdocument in $(ls -X1 $workdocument_dir); do
+    if [ -d $workdocument_dir ]; then
+
+        IFS=$'\n'
+        for workdocument in $(ls -X1 $workdocument_dir); do
 
             name=$workdocument
             icon="accessories-text-editor"
@@ -29,7 +31,8 @@ for workdocument_dir in $workdocument_dirs; do
                     echo \"icon\": \"$icon\",
                     echo \"command\": \"$command\"
             echo "}"
-    done
+        done
+    fi
 done
 
 echo "]"

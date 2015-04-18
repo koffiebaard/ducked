@@ -33,6 +33,12 @@ class OSHandler:
         self.installed_apps.extend(plugin_apps)
         return plugin_apps
 
+    def focus_to_window(self, name):
+
+        plugin_apps = os.popen(self.cwd() + "/bin/focus_to_window \"" + name + "\"").read()
+
+        return plugin_apps
+
     def goto_app(self, command):
         command = re.sub(' %[a-zA-Z0-9]+', '', command)
         command += " &"

@@ -46,26 +46,33 @@ class Search:
         else:
             Window.clear_listview()
 
-    def signal_goto_first_result(self, query):
+    def signal_goto_first_result(self, query, ctrl_pressed):
         """Go to result"""
         self.search(query)
 
+        # One result or a list?
         if type(self.search_results) is dict:
-            self.OS.goto_app(self.search_results["command"])
-        elif len(self.search_results) > 0:
-            app = self.search_results[0]
-            Application = App()
-            Application.app_is_selected(app["name"])
-            self.OS.goto_app(app["command"])
+            self.launch_app(self.search_results, ctrl_pressed)
 
-    def signal_goto_app_name(self, app_name):
+        # If it's a list, pick the first
+        elif len(self.search_results) > 0:
+            self.launch_app(self.search_results[0], ctrl_pressed)
+
+    def signal_goto_app_name(self, app_name, ctrl_pressed):
         Application = App()
         app = Application.get_by_name(app_name)
 
         if app:
-            Application = App()
-            Application.app_is_selected(app["name"])
-            self.OS.goto_app(app["command"])
+            self.launch_app(app, ctrl_pressed)
+
+    def launch_app(self, app, ctrl_pressed):
+
+        if app and type(app) is dict:
+            # Try to bring focus to the window, otherwise just launch it
+            if ctrl_pressed == True or "source" not in app or app["source"] != "installed" or self.OS.focus_to_window(app["name"]) == "narp":
+                Application = App()
+                Application.app_is_selected(app["name"])
+                self.OS.goto_app(app["command"])
 
     def search(self, query):
         """Search for anything the user wants"""

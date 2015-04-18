@@ -23,10 +23,10 @@ class Ducked:
         if "--reindex" in sys.argv:
             self.Index.index_apps()
             sys.exit(0)
-        # API stuff, no GUI
         if "--migrate" in sys.argv:
             Migrate = DBMigration()
             Migrate.check_if_migration_is_needed()
+            self.Index.index_apps()
             sys.exit(0)
         # No API stuff, so do the GUI
         else:

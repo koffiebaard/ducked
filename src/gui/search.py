@@ -45,19 +45,33 @@ class Search:
         """Signal on change for text entry. Searches for apps."""
         self.Search.signal_changed(self, widget)
 
-    def signal_goto(self, widget):
-        """App selection through enter key on textview"""
-        query = self.entry.get_text()
-        self.Search.signal_goto_first_result(query)
-        self.destroy()
+    # def signal_goto(self, widget):
+    #     """App selection through enter key on textview"""
+    #     query = self.entry.get_text()
+    #     self.Search.signal_goto_first_result(query)
+    #     self.destroy()
 
     def signal_enter_key(self, widget, event):
         """App selection through enter key on listview."""
+
+        # Did you press ctrl?
+        ctrl_pressed = False
+        if event.state & gtk.gdk.CONTROL_MASK:
+            ctrl_pressed = True
+
         if event.keyval == 65293:
             (model, iter) = self.treeview.get_selection().get_selected()
+
             if iter:
+                print iter
                 app_name = model.get_value(iter, 1)
-                self.Search.signal_goto_app_name(app_name)
+                self.Search.signal_goto_app_name(app_name, ctrl_pressed)
+                self.destroy()
+                return True
+            else:
+                query = self.entry.get_text()
+                print query
+                self.Search.signal_goto_first_result(query, ctrl_pressed)
                 self.destroy()
                 return True
         return False
@@ -135,6 +149,9 @@ class Search:
         self.window.add(self.table)
         self.window.set_focus(self.entry)
 
+        # key press for enter press
+        self.window.connect('key-press-event', self.signal_enter_key)
+
     def draw_listview(self):
 
         # list store
@@ -177,7 +194,6 @@ class Search:
 
         self.treeview.set_cursor(0)
         self.treeview.get_selection().set_mode(gtk.SELECTION_BROWSE)
-        self.window.connect('key-press-event', self.signal_enter_key)
 
         self.table.attach(self.treeview, 0, 2, 1, 2)
         self.window.resize(1,1)
@@ -271,6 +287,6 @@ class Search:
         self.entry.connect("changed", self.signal_changed)
 
         # on submit for text entry
-        self.entry.connect("activate", self.signal_goto)
+        # self.entry.connect("activate", self.signal_goto)
 
-        self.treeview.get_selection().connect("changed", self.signal_goto)
+        # self.treeview.get_selection().connect("changed", self.signal_goto)
