@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
-import os, json, re
+import os
+import sys
+import json
+import re
 from subprocess import Popen, PIPE
 
 class OSHandler:
@@ -42,16 +45,23 @@ class OSHandler:
     def goto_app(self, command):
         command = re.sub(' %[a-zA-Z0-9]+', '', command)
         command += " &"
-        print command
+
+        if "--verbose" in sys.argv:
+            print command
+
         os.popen(command)
 
     def run_command(self, command):
-        print command
+
+        if "--verbose" in sys.argv:
+            print command
+
         return os.popen(command).read()
 
     def run_command_forked(self, command):
         command += " &"
-        print command
+        if "--verbose" in sys.argv:
+            print command
         Popen(command, shell=True)
 
     def cwd(self):

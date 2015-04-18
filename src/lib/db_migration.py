@@ -27,6 +27,8 @@ class DBMigration:
             self.db_version = None
         else:
             self.db_version = self.Meta.get("version")
+            if type(self.db_version) is dict:
+                self.db_version = self.db_version["value"]
 
 
     def check_if_migration_is_needed(self):
@@ -52,6 +54,10 @@ class DBMigration:
             self.Meta.set("initial_sync_completed", 0)
             self.Meta.set("version", self.app_version)
             self.Meta.set("app_name", self.app["name"])
+            self.Meta.set("app_description", self.app["description"])
+            self.Meta.set("app_url", self.app["url"])
+            self.Meta.set("author", self.app["author"])
+            self.Meta.set("author_email", self.app["author_email"])
 
 
             # App table

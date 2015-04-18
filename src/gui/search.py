@@ -63,14 +63,12 @@ class Search:
             (model, iter) = self.treeview.get_selection().get_selected()
 
             if iter:
-                print iter
                 app_name = model.get_value(iter, 1)
                 self.Search.signal_goto_app_name(app_name, ctrl_pressed)
                 self.destroy()
                 return True
             else:
                 query = self.entry.get_text()
-                print query
                 self.Search.signal_goto_first_result(query, ctrl_pressed)
                 self.destroy()
                 return True
