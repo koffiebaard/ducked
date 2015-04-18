@@ -3,8 +3,9 @@
 import re, urllib, random, json
 
 from src.lib.os_handler import OSHandler
-from src.lib.indexer import Indexer
+# from src.lib.indexer import Indexer
 from src.models.app import App
+from src.models.web_search_plugin import WebSearchPlugin
 from operator import itemgetter, attrgetter, methodcaller
 
 import logging
@@ -20,6 +21,7 @@ class Search:
 
     OS = OSHandler()
     App = App()
+    WebSearchPlugin = WebSearchPlugin()
     search_results = []
 
     def signal_changed(self, Window, widget):
@@ -96,80 +98,6 @@ class Search:
                 "command": fallback_command,
                 "icon": self.OS.cwd() + "/resources/icons/calc.png"
             }]
-        elif re.search('^github ', query) or re.search('^gh ', query):
-            query = re.sub("^github ", "", query)
-            query = re.sub("^gh ", "", query)
-            self.search_results = [{
-                "name": "Github to \"" + query + "\"",
-                "command": self.OS.cwd() + "/bin/open_file https://github.com/search?q=" + urllib.quote_plus(query),
-                "icon": self.OS.cwd() + "/resources/icons/github.png"
-            }]
-        elif re.search('^maps ', query):
-            query = re.sub("^maps ", "", query)
-            self.search_results = [{
-                "name": "Search Maps for \"" + query + "\"",
-                "command": self.OS.cwd() + "/bin/open_file https://www.google.com/maps/search/" + urllib.quote_plus(query),
-                "icon": self.OS.cwd() + "/resources/icons/google.png"
-            }]
-        elif re.search('^wiki ', query):
-            query = re.sub("^wiki ", "", query)
-            self.search_results = [{
-                "name": "Search Wiki for \"" + query + "\"",
-                "command": self.OS.cwd() + "/bin/open_file https://en.wikipedia.org/w/index.php?search=" + urllib.quote_plus(query),
-                "icon": self.OS.cwd() + "/resources/icons/wiki.png"
-            }]
-        elif re.search('^youtube ', query) or re.search('^yt ', query):
-            query = re.sub("^youtube ", "", query)
-            query = re.sub("^yt ", "", query)
-            self.search_results = [{
-                "name": "Search YouTube for \"" + query + "\"",
-                "command": self.OS.cwd() + "/bin/open_file https://www.youtube.com/results?search_query=" + urllib.quote_plus(query),
-                "icon": self.OS.cwd() + "/resources/icons/youtube.png"
-            }]
-        elif re.search('^twitter ', query) or re.search('^twit ', query):
-            query = re.sub("^twit ", "", query)
-            query = re.sub("^twitter ", "", query)
-            self.search_results = [{
-                "name": "Search The Twits for \"" + query + "\"",
-                "command": self.OS.cwd() + "/bin/open_file https://twitter.com/search?q=" + urllib.quote_plus(query),
-                "icon": self.OS.cwd() + "/resources/icons/twitter.png"
-            }]
-        elif re.search('^gmail ', query):
-            query = re.sub("^gmail ", "", query)
-            self.search_results = [{
-                "name": "Search Gmail for \"" + query + "\"",
-                "command": self.OS.cwd() + "/bin/open_file https://mail.google.com/mail/#search/" + urllib.quote_plus(query),
-                "icon": self.OS.cwd() + "/resources/icons/gmail.png"
-            }]
-        elif re.search('^torrentz ', query) or re.search('^tz ', query):
-            query = re.sub("^tz ", "", query)
-            query = re.sub("^torrentz ", "", query)
-            self.search_results = [{
-                "name": "Search Torrentz for \"" + query + "\"",
-                "command": self.OS.cwd() + "/bin/open_file https://torrentz.eu/search?q=" + urllib.quote_plus(query),
-                "icon": self.OS.cwd() + "/resources/icons/torrentz.png"
-            }]
-        elif re.search('^py2ref ', query):
-            query = re.sub("^py2ref ", "", query)
-            self.search_results = [{
-                "name": "Search Python 2 ref for \"" + query + "\"",
-                "command": self.OS.cwd() + "/bin/open_file https://docs.python.org/2/search.html?q=" + urllib.quote_plus(query),
-                "icon": self.OS.cwd() + "/resources/icons/python.png"
-            }]
-        elif re.search('^py3ref ', query):
-            query = re.sub("^py3ref ", "", query)
-            self.search_results = [{
-                "name": "Search Python 3 ref for \"" + query + "\"",
-                "command": self.OS.cwd() + "/bin/open_file https://docs.python.org/3/search.html?q=" + urllib.quote_plus(query),
-                "icon": self.OS.cwd() + "/resources/icons/python.png"
-            }]
-        elif re.search('^phpref ', query):
-            query = re.sub("^phpref ", "", query)
-            self.search_results = [{
-                "name": "Search PHP ref for \"" + query + "\"",
-                "command": self.OS.cwd() + "/bin/open_file http://php.net/manual-lookup.php?pattern=" + urllib.quote_plus(query),
-                "icon": self.OS.cwd() + "/resources/icons/php.png"
-            }]
         elif re.search('^http[s]{0,1}:\/\/.+|[a-zA-Z]+\.[a-zA-Z]{2,5}', query):
             query = re.sub("^php ", "", query)
 
@@ -241,16 +169,30 @@ class Search:
             }]
         else:
 
-            app_results = self.search_apps(query)
-
-            if len(app_results) > 0:
-                self.search_results = app_results
-            else:
+            # Can we match on a web plugin?
+            web_plugin = self.WebSearchPlugin.search(query)
+            if web_plugin != None:
+                query = re.sub(web_plugin["match"], "", query)
+                query = re.sub(web_plugin["match_shorthand"], "", query)
                 self.search_results = [{
-                   "name": "Search for \"" + query + "\"",
-                   "command": self.OS.cwd() + "/bin/open_file https://www.google.com/search?q=" + urllib.quote_plus(query),
-                   "icon": self.OS.cwd() + "/resources/icons/google.png"
+                    "name": web_plugin["name"].replace("{query}", query),
+                    "command": self.OS.cwd() + "/bin/open_file " + web_plugin["url"].replace("{query}", urllib.quote_plus(query)),
+                    "icon": self.OS.cwd() + "/" + web_plugin["icon"]
                 }]
+            # No match on plugins. Search for apps.
+            else:
+                app_results = self.search_apps(query)
+
+                # Have we found any apps?
+                if len(app_results) > 0:
+                    self.search_results = app_results
+                # No apps, so fallback to Google Search
+                else:
+                    self.search_results = [{
+                       "name": "Search for \"" + query + "\"",
+                       "command": self.OS.cwd() + "/bin/open_file https://www.google.com/search?q=" + urllib.quote_plus(query),
+                       "icon": self.OS.cwd() + "/resources/icons/google.png"
+                    }]
 
         return self.search_results
 

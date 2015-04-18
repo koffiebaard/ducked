@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 
 import sqlite3
+import re
 from src.lib.os_handler import OSHandler
+
+def regexp(expr, item):
+    reg = re.compile(expr)
+    return reg.search(item) is not None
 
 class DBHandler:
 
@@ -31,3 +36,4 @@ class DBHandler:
         OS = OSHandler()
         cwd = OS.cwd()
         self.conn = sqlite3.connect(cwd + '/ducked.db')
+        self.conn.create_function("REGEXP", 2, regexp)

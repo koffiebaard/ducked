@@ -12,6 +12,8 @@ for project_dir in $project_dirs; do
     IFS=$'\n'
     for project in $(ls -X1 $project_dir); do
 
+        if [ -d $project_dir/$project ]; then
+
             app_name=$(basename $project)
             app_icon="/usr/share/icons/hicolor/256x256/apps/phpstorm.png"
             app_command="cd $project_dir && pstorm $project"
@@ -27,6 +29,7 @@ for project_dir in $project_dirs; do
                     echo \"icon\": \"$app_icon\",
                     echo \"command\": \"$app_command\"
             echo "}"
+        fi
     done
 done
 

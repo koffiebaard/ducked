@@ -92,13 +92,3 @@ class App:
             pass
 
         return False
-
-    def create_table(self):
-        cursor = self.db.conn.cursor()
-        cursor.execute('''CREATE TABLE apps
-             (icon text, name text, command text, selected int, source text)''')
-        self.db.conn.commit()
-        cursor.close()
-
-    def __init__(self):
-        self.db.make_sure_table_exists("apps", self.create_table)

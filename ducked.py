@@ -6,6 +6,7 @@ import gtk
 from src.gui.search import Search
 from src.gui.indexing import Indexing
 from src.lib.indexer import Indexer
+from src.lib.db_migration import DBMigration
 import sys
 from src.lib.log import Log
 
@@ -21,6 +22,11 @@ class Ducked:
         # API stuff, no GUI
         if "--reindex" in sys.argv:
             self.Index.index_apps()
+            sys.exit(0)
+        # API stuff, no GUI
+        if "--migrate" in sys.argv:
+            Migrate = DBMigration()
+            Migrate.check_if_migration_is_needed()
             sys.exit(0)
         # No API stuff, so do the GUI
         else:

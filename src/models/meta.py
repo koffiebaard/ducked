@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import sqlite3
 from src.lib.db_handler import DBHandler
 
 class Meta:
@@ -41,21 +40,15 @@ class Meta:
         return result
 
     def get(self, setting):
-        conditions = (setting,)
-        cursor = self.db.conn.cursor()
-        cursor.execute("select * from `meta` where `setting` = ?", conditions)
-        result = cursor.fetchone()
-        cursor.close()
+        try:
+            conditions = (setting,)
+            cursor = self.db.conn.cursor()
 
-        if result != None:
-            return {"setting": result[0], "value": result[1]}
+            cursor.execute("select * from `meta` where `setting` = ?", conditions)
+            result = cursor.fetchone()
+            cursor.close()
 
-    def create_table(self):
-        cursor = self.db.conn.cursor()
-        cursor.execute('''create table meta
-             (setting text, value text)''')
-        self.db.conn.commit()
-        cursor.close()
-
-    def __init__(self):
-        self.db.make_sure_table_exists("meta", self.create_table)
+            if result != None:
+                return {"setting": result[0], "value": result[1]}
+        except:
+            return None
