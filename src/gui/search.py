@@ -123,7 +123,7 @@ class Search:
 
         OS = OSHandler()
 
-        logo_pixbuf = gtk.gdk.pixbuf_new_from_file(OS.cwd() + "/icons/ducked.png")
+        logo_pixbuf = gtk.gdk.pixbuf_new_from_file(OS.cwd() + "/resources/logo/ducked-96x96.png")
 
         self.logo = gtk.Image()
         self.logo.set_from_pixbuf(logo_pixbuf)
@@ -251,13 +251,13 @@ class Search:
             if icon:
                 icon_location = icon.get_filename()
             else:
-                icon_location = OS.cwd() + "/icons/icon_not_found.png"
+                icon_location = OS.cwd() + "/resources/icons/icon_not_found.png"
 
         if os.path.isfile(icon_location) == False:
             if os.path.isfile("/usr/share/icons/" + icon_location) == True:
                 icon_location = "/usr/share/icons/" + icon_location
             else:
-                icon_location = OS.cwd() + "/icons/icon_not_found.png"
+                icon_location = OS.cwd() + "/resources/icons/icon_not_found.png"
 
         return icon_location
 
