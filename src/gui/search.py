@@ -41,9 +41,9 @@ class Search:
 
         self.destroy()
 
-    def signal_changed(self,widget):
+    def signal_input_changed(self,widget):
         """Signal on change for text entry. Searches for apps."""
-        self.Search.signal_changed(self, widget)
+        self.Search.signal_input_changed(self, widget)
 
     def signal_enter_key(self, widget, event):
         """App selection through enter key on listview."""
@@ -276,4 +276,4 @@ class Search:
         self.add_accelerator(self.window, "Escape", self.shortcut_destroy)
 
         # on change for text entry
-        self.entry.connect("changed", self.signal_changed)
+        self.entry.connect("changed", self.signal_input_changed)

@@ -1,8 +1,8 @@
 # Ducked
 
-App launcher that doesn't aim for being Ultra Shitty. Python, GTK, bash, sqlite, kittens.
+App launcher with a decent plugin system, able to bring apps to the foreground if it's already open.
 
-Supports basic search for:
+Supports web search for:
 
     Google
     Youtube
@@ -16,8 +16,16 @@ Supports basic search for:
     PHP
     Twitter
 
-It also acts as a calculator, allows you to browse to websites immediately by entering a URL, and it has a plugin system
-for you to extend functionalities as you see fit.
+It also:
+
+- acts as a calculator
+- allows you to browse to websites immediately by entering a URL
+- has a plugin system, to extend web searches, and to run your own commands, extending functionalities as you see fit.
+- Lets you jump to directories (or open files)
+- Choose to bring to front or launch anew (press enter == bring to front if possible, ctrl+enter == open new app).
+
+## Essentials
+Python, GTK, bash, sqlite, kittens.
 
 ## screenshots
 

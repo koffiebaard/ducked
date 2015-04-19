@@ -26,7 +26,7 @@ class Search:
     SearchablesPlugin = SearchablesPlugin()
     search_results = []
 
-    def signal_changed(self, Window, widget):
+    def signal_input_changed(self, Window, widget):
         """Signal on change for text entry"""
         query = Window.entry.get_text()
 
@@ -49,7 +49,7 @@ class Search:
             Window.clear_listview()
 
     def signal_goto_first_result(self, query, ctrl_pressed):
-        """Go to result"""
+        """Pressed enter on the input box, so go to first result"""
         self.search(query)
 
         # One result or a list?
@@ -61,6 +61,7 @@ class Search:
             self.launch_app(self.search_results[0], ctrl_pressed)
 
     def signal_goto_app_name(self, app_name, ctrl_pressed):
+        """Pressed enter on one of the listview items, so we've got an app name"""
         Application = App()
         app = Application.get_by_name(app_name)
 
@@ -68,6 +69,7 @@ class Search:
             self.launch_app(app, ctrl_pressed)
 
     def launch_app(self, app, ctrl_pressed):
+        """The actual launching of the app"""
 
         if app and type(app) is dict:
             # Try to bring focus to the window, otherwise just launch it
