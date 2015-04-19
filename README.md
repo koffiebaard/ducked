@@ -4,17 +4,17 @@ App launcher with a decent plugin system, able to bring apps to the foreground i
 
 Supports web search for:
 
-    Google
-    Youtube
-    Wiki
-    4chan
-    Github
-    Google Maps
-    Gmail
-    Torrentz
-    Python 2 & 3
-    PHP
-    Twitter
+- Google
+- Youtube
+- Wiki
+- 4chan
+- Github
+- Google Maps
+- Gmail
+- Torrentz
+- Python 2 & 3
+- PHP
+- Twitter
 
 It also:
 
