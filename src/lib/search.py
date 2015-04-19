@@ -6,6 +6,7 @@ from src.lib.os_handler import OSHandler
 # from src.lib.indexer import Indexer
 from src.models.app import App
 from src.models.web_search_plugin import WebSearchPlugin
+from src.models.searchables_plugin import SearchablesPlugin
 from operator import itemgetter, attrgetter, methodcaller
 
 import logging
@@ -22,6 +23,7 @@ class Search:
     OS = OSHandler()
     App = App()
     WebSearchPlugin = WebSearchPlugin()
+    SearchablesPlugin = SearchablesPlugin()
     search_results = []
 
     def signal_changed(self, Window, widget):
@@ -77,58 +79,23 @@ class Search:
     def search(self, query):
         """Search for anything the user wants"""
 
-        # is it a direct match to a 4chan board?
+        # 4Channey?
         if query in ["/a/","/c/","/w/","/m/","/cgl/","/cm/","/f/","/n/","/jp/","/vp/","/v/","/vg/","/vr/","/co/","/g/","/tv/","/k/","/o/","/an/","/tg/","/sp/","/asp/","/sci/","/int/","/out/","/toy/","/biz/","/i/","/po/","/p/","/ck/","/ic/","/wg/","/mu/","/fa/","/3/","/gd/","/diy/","/wsg/","/trv/","/fit/","/x/","/lit/","/adv/","/lgbt/","/mlp/","/b/","/r/","/r9k/","/pol/","/soc/","/s4s/","/s/","/hc/","/hm/","/h/","/e/","/u/","/d/","/y/","/t/","/hr/","/gif/"]:
-            self.search_results = [{
-                "name": "Go to " + query,
-                "command": self.OS.cwd() + "/bin/open_file https://boards.4chan.org" + query,
-                "icon": self.OS.cwd() + "/resources/icons/4chan.png"
-            }]
-        # is a dir/file kind of syntaxy goodness?
+            self.search_results = self.search_4chan(query)
+
+        # Dir/file kind of syntaxy goodness?
         elif re.search('^[~]*[/]+', query):
-            self.search_results = [{
-                "name": "Open " + query,
-                "command": self.OS.cwd() + "/bin/open_file " + query,
-                "icon": self.OS.cwd() + "/resources/icons/dir.png"
-            }]
-        # does this search query look particularly calculatey?
+            self.search_results = self.search_dir(query)
+
+        # Calculatey?
         elif re.search('^[\(\)0-9\. ]{1}[\(\)0-9\. +\/%\^\*\-]+[\(\)0-9\. ]{1}$', query):
+            self.search_results = self.search_calculator(query)
 
-            fallback_search_results = self.search_apps("calculator")
-            if len(fallback_search_results) > 0:
-                fallback_command = fallback_search_results[0]
-            else:
-                fallback_command = ""
-
-            self.search_results = [{
-                "name": self.OS.run_command('echo "scale=10; ' + query + '" | bc').strip(),
-                "command": fallback_command,
-                "icon": self.OS.cwd() + "/resources/icons/calc.png"
-            }]
+        # Goto website
         elif re.search('^http[s]{0,1}:\/\/.+|[a-zA-Z]+\.[a-zA-Z]{2,5}', query):
-            query = re.sub("^php ", "", query)
+            self.search_results = self.search_goto_website(query)
 
-            if re.search('^http[s]{0,1}:\/\/.+', query) == None:
-                query = "http://" + query
-
-            self.search_results = [{
-                "name": "goto " + query + "",
-                "command": self.OS.cwd() + "/bin/open_file " + query,
-                "icon": self.OS.cwd() + "/resources/icons/web.png"
-            }]
-        elif re.search('^sup$', query):
-            spotify_whats_playing = self.OS.run_command(self.OS.cwd() + "/plugins/searchables/spotify_whats_playing")
-            self.search_results = [{
-                "name": spotify_whats_playing.strip(),
-                "command": "",
-                "icon": "spotify-client"
-            }]
-        elif re.search('^cb ', query):
-            query = re.sub("^cb ", "", query)
-
-            results = self.OS.run_command(self.OS.cwd() + "/plugins/searchables/search_chrome_bookmarks " + query)
-            print json.loads(results.strip())
-            self.search_results = json.loads(results)
+        # wotd
         elif re.search('^wotd$', query):
 
             self.search_results = {
@@ -136,70 +103,29 @@ class Search:
                 "command": ""
             }
 
+        # anti-boredom feature
         elif re.search('^b[o]+red$', query):
-
-            logger.info("Awesooooome. Someone is bored! ^^")
-            possible_time_spendature = [
-                "https://en.wikipedia.org/wiki/List_of_common_misconceptions",
-                "https://en.wikipedia.org/wiki/Out-of-place_artifact",
-                "https://en.wikipedia.org/wiki/Category:Anomalous_weather",
-                "https://en.wikipedia.org/wiki/List_of_people_who_disappeared_mysteriously",
-                "https://boards.4chan.org/b/",
-                "https://en.wikipedia.org/wiki/Turritopsis_dohrnii",
-                "https://en.wikipedia.org/wiki/Ophiocordyceps_unilateralis",
-                "https://www.youtube.com/watch?v=HEheh1BH34Q",
-                "https://en.wikipedia.org/wiki/Megatherium",
-                "https://en.wikipedia.org/wiki/Largest_organisms",
-                "https://en.wikipedia.org/wiki/Largest_prehistoric_animals",
-                "https://en.wikipedia.org/wiki/List_of_longest-living_organisms",
-                "https://en.wikipedia.org/wiki/Common_misunderstandings_of_genetics",
-                "https://xkcd.com",
-                "https://en.wikipedia.org/wiki/List_of_backmasked_messages",
-                "https://en.wikipedia.org/wiki/Spongiforma_squarepantsii",
-                "https://en.wikipedia.org/wiki/Berlin_Gold_Hat",
-                "https://en.wikipedia.org/wiki/Timeline_of_the_evolutionary_history_of_life",
-                "https://en.wikipedia.org/wiki/Solid_oxygen",
-                "http://m.space.com/19865-how-to-make-a-peanut-butter-and-honey-sandwich-in-space-video.html",
-                "https://en.wikipedia.org/wiki/Alpheidae",
-                "https://en.wikipedia.org/wiki/Scolopendra_gigantea",
-                "http://hubblesite.org/gallery/album/",
-                "http://space-facts.com/mars-panorama/",
-                "https://en.wikipedia.org/wiki/Microraptor",
-                "https://en.wikipedia.org/wiki/Archelon",
-                "http://www.thesillywalk.com/"
-            ]
-
-            self.search_results = [{
-                "name": "Press enter.",
-                "command": self.OS.cwd() + "/bin/open_file " + random.choice(possible_time_spendature),
-                "icon": ""
-            }]
+            self.search_results = self.search_anti_boredom(query)
         else:
 
             # Can we match on a web plugin?
-            web_plugin = self.WebSearchPlugin.search(query)
-            if web_plugin != None:
-                query = re.sub(web_plugin["match"], "", query)
-                query = re.sub(web_plugin["match_shorthand"], "", query)
-                self.search_results = [{
-                    "name": web_plugin["name"].replace("{query}", query),
-                    "command": self.OS.cwd() + "/bin/open_file " + web_plugin["url"].replace("{query}", urllib.quote_plus(query)),
-                    "icon": self.OS.cwd() + "/" + web_plugin["icon"]
-                }]
+            if self.match_for_web_plugin(query) == True:
+                self.search_results = self.search_web_plugin(query)
+
+            # Can we match on a searchable plugin?
+            elif self.match_for_searchable_plugin(query) == True:
+                self.search_results = self.search_searchable_plugin(query)
+
             # No match on plugins. Search for apps.
             else:
-                app_results = self.search_apps(query)
-
                 # Have we found any apps?
+                app_results = self.search_apps(query)
                 if len(app_results) > 0:
                     self.search_results = app_results
+
                 # No apps, so fallback to Google Search
                 else:
-                    self.search_results = [{
-                       "name": "Search for \"" + query + "\"",
-                       "command": self.OS.cwd() + "/bin/open_file https://www.google.com/search?q=" + urllib.quote_plus(query),
-                       "icon": self.OS.cwd() + "/resources/icons/google.png"
-                    }]
+                    self.search_results = self.search_fallback(query)
 
         return self.search_results
 
@@ -249,3 +175,118 @@ class Search:
 
         search_results = sorted(search_results, key=itemgetter('selected'), reverse=True)
         return search_results
+
+    def match_for_web_plugin(self, query):
+        self.web_plugin = self.WebSearchPlugin.search(query)
+        if self.web_plugin != None:
+            return True
+
+        return False
+
+    def search_web_plugin(self, query):
+        query = re.sub(self.web_plugin["match"], "", query)
+        query = re.sub(self.web_plugin["match_shorthand"], "", query)
+
+        return [{
+            "name": self.web_plugin["name"].replace("{query}", query),
+            "command": self.OS.cwd() + "/bin/open_file " + self.web_plugin["url"].replace("{query}", urllib.quote_plus(query)),
+            "icon": self.OS.cwd() + "/" + self.web_plugin["icon"]
+        }]
+
+    def match_for_searchable_plugin(self, query):
+        self.searchable_plugin = self.SearchablesPlugin.search(query)
+        if self.searchable_plugin != None:
+            return True
+
+        return False
+
+    def search_searchable_plugin(self, query):
+        query = re.sub(self.searchable_plugin["match"], "", query)
+        query = re.sub(self.searchable_plugin["match_shorthand"], "", query)
+
+        command = self.searchable_plugin["command"].replace("{query}", query)
+        plugin_search_results = self.OS.run_command(self.OS.cwd() + "/" + command)
+        return json.loads(plugin_search_results)
+
+    def search_anti_boredom(self, query):
+        logger.info("Awesooooome. Someone is bored! ^^")
+        possible_time_spendature = [
+            "https://en.wikipedia.org/wiki/List_of_common_misconceptions",
+            "https://en.wikipedia.org/wiki/Out-of-place_artifact",
+            "https://en.wikipedia.org/wiki/Category:Anomalous_weather",
+            "https://en.wikipedia.org/wiki/List_of_people_who_disappeared_mysteriously",
+            "https://boards.4chan.org/b/",
+            "https://en.wikipedia.org/wiki/Turritopsis_dohrnii",
+            "https://en.wikipedia.org/wiki/Ophiocordyceps_unilateralis",
+            "https://www.youtube.com/watch?v=HEheh1BH34Q",
+            "https://en.wikipedia.org/wiki/Megatherium",
+            "https://en.wikipedia.org/wiki/Largest_organisms",
+            "https://en.wikipedia.org/wiki/Largest_prehistoric_animals",
+            "https://en.wikipedia.org/wiki/List_of_longest-living_organisms",
+            "https://en.wikipedia.org/wiki/Common_misunderstandings_of_genetics",
+            "https://xkcd.com",
+            "https://en.wikipedia.org/wiki/List_of_backmasked_messages",
+            "https://en.wikipedia.org/wiki/Spongiforma_squarepantsii",
+            "https://en.wikipedia.org/wiki/Berlin_Gold_Hat",
+            "https://en.wikipedia.org/wiki/Timeline_of_the_evolutionary_history_of_life",
+            "https://en.wikipedia.org/wiki/Solid_oxygen",
+            "http://m.space.com/19865-how-to-make-a-peanut-butter-and-honey-sandwich-in-space-video.html",
+            "https://en.wikipedia.org/wiki/Alpheidae",
+            "https://en.wikipedia.org/wiki/Scolopendra_gigantea",
+            "http://hubblesite.org/gallery/album/",
+            "http://space-facts.com/mars-panorama/",
+            "https://en.wikipedia.org/wiki/Microraptor",
+            "https://en.wikipedia.org/wiki/Archelon",
+            "http://www.thesillywalk.com/"
+        ]
+
+        return [{
+            "name": "Press enter.",
+            "command": self.OS.cwd() + "/bin/open_file " + random.choice(possible_time_spendature),
+            "icon": ""
+        }]
+
+    def search_goto_website(self, query):
+
+        if re.search('^http[s]{0,1}:\/\/.+', query) == None:
+            query = "http://" + query
+
+        return [{
+            "name": "goto " + query + "",
+            "command": self.OS.cwd() + "/bin/open_file " + query,
+            "icon": self.OS.cwd() + "/resources/icons/web.png"
+        }]
+
+    def search_calculator(self, query):
+        fallback_search_results = self.search_apps("calculator")
+        if len(fallback_search_results) > 0:
+            fallback_command = fallback_search_results[0]
+        else:
+            fallback_command = ""
+
+        return [{
+            "name": self.OS.run_command('echo "scale=10; ' + query + '" | bc').strip(),
+            "command": fallback_command,
+            "icon": self.OS.cwd() + "/resources/icons/calc.png"
+        }]
+
+    def search_dir(self, query):
+        return [{
+            "name": "Open " + query,
+            "command": self.OS.cwd() + "/bin/open_file " + query,
+            "icon": self.OS.cwd() + "/resources/icons/dir.png"
+        }]
+
+    def search_4chan(self, query):
+        return [{
+             "name": "Go to " + query,
+             "command": self.OS.cwd() + "/bin/open_file https://boards.4chan.org" + query,
+             "icon": self.OS.cwd() + "/resources/icons/4chan.png"
+         }]
+
+    def search_fallback(self, query):
+        return [{
+             "name": "Search for \"" + query + "\"",
+             "command": self.OS.cwd() + "/bin/open_file https://www.google.com/search?q=" + urllib.quote_plus(query),
+             "icon": self.OS.cwd() + "/resources/icons/google.png"
+         }]

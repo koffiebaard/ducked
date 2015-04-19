@@ -12,6 +12,7 @@ class App:
     command = ""
     selected = 0
     source = ""
+    marked_for_deletion = 0
 
     def get_all(self):
         cursor = self.db.conn.cursor()
@@ -49,25 +50,48 @@ class App:
             }
 
     def save(self):
-        data = (
-            self.icon,
-            self.name,
-            self.command,
-            str(self.selected),
-            self.source
-        )
 
-        cursor = self.db.conn.cursor()
-        cursor.execute(
-            "INSERT INTO apps "
-            "(`icon`, `name`, `command`, `selected`, `source`)"
-            "VALUES"
-            "(?, ?, ?, ?, ?)",
-            data
-        )
+        app_in_db = self.get_by_name(self.name)
 
-        result = self.db.conn.commit()
-        cursor.close()
+        if app_in_db == None:
+
+            data = (
+                self.icon,
+                self.name,
+                self.command,
+                str(self.selected),
+                self.source,
+                str(self.marked_for_deletion)
+            )
+            cursor = self.db.conn.cursor()
+            cursor.execute(
+                "INSERT INTO apps "
+                "(`icon`, `name`, `command`, `selected`, `source`, `marked_for_deletion`)"
+                "VALUES"
+                "(?, ?, ?, ?, ?, ?)",
+                data
+            )
+            result = self.db.conn.commit()
+            cursor.close()
+        else:
+            data = (
+                self.icon,
+                self.command,
+                self.source,
+                str(self.marked_for_deletion),
+                self.name
+            )
+            cursor = self.db.conn.cursor()
+            cursor.execute(
+                "update `apps` "
+                "set `icon` = ?, `command` = ?, `source` = ?, `marked_for_deletion` = ?"
+                "where `name` = ?",
+                data
+            )
+            result = self.db.conn.commit()
+            cursor.close()
+
+
 
         return result
 
@@ -81,6 +105,42 @@ class App:
             cursor.execute(
                 "update apps set `selected` = `selected` + 1 where `name` = ?",
                 conditions
+            )
+            result = self.db.conn.commit()
+            cursor.close()
+            return result
+        except:
+            print sys.exc_info()[0]
+            print sys.exc_info()[1]
+            self.db.unlock_db()
+            pass
+
+        return False
+
+    def mark_all_for_deletion(self):
+
+        try:
+            cursor = self.db.conn.cursor()
+            cursor.execute(
+                "update apps set `marked_for_deletion` = 1"
+            )
+            result = self.db.conn.commit()
+            cursor.close()
+            return result
+        except:
+            print sys.exc_info()[0]
+            print sys.exc_info()[1]
+            self.db.unlock_db()
+            pass
+
+        return False
+
+    def remove_marked_for_deletion(self):
+
+        try:
+            cursor = self.db.conn.cursor()
+            cursor.execute(
+                "delete from `apps` where `marked_for_deletion` = 1"
             )
             result = self.db.conn.commit()
             cursor.close()

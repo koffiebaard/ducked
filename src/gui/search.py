@@ -45,12 +45,6 @@ class Search:
         """Signal on change for text entry. Searches for apps."""
         self.Search.signal_changed(self, widget)
 
-    # def signal_goto(self, widget):
-    #     """App selection through enter key on textview"""
-    #     query = self.entry.get_text()
-    #     self.Search.signal_goto_first_result(query)
-    #     self.destroy()
-
     def signal_enter_key(self, widget, event):
         """App selection through enter key on listview."""
 
@@ -283,8 +277,3 @@ class Search:
 
         # on change for text entry
         self.entry.connect("changed", self.signal_changed)
-
-        # on submit for text entry
-        # self.entry.connect("activate", self.signal_goto)
-
-        # self.treeview.get_selection().connect("changed", self.signal_goto)

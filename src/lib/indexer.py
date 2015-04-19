@@ -31,10 +31,24 @@ class Indexer:
     def index_apps(self):
 
         logger.info("Begin indexing apps.")
+
+        # Mark all for deletion (update everything we can find, then delete the remainder)
+        Application = App()
+        Application.mark_all_for_deletion()
+
+        # Index the installed apps
         self.index_installed_apps()
+
+        # Index the indexable plugins
         self.index_plugin_apps()
+
         self.Meta.set("initial_sync_completed", 1)
         logger.info("Finish indexing apps.")
+
+        # All done, remove the apps we didn't touch
+        Application.mark_all_for_deletion()
+
+        # Log can't grow too big, watch it for file size
         self.OS.cleanup_logs()
 
     def index_installed_apps(self):
@@ -42,13 +56,12 @@ class Indexer:
 
         for app in installed_apps:
             Application = App()
-
-            if Application.get_by_name(app["name"]) == None:
-                Application.name = app["name"]
-                Application.icon = app["icon"]
-                Application.command = app["command"]
-                Application.source = "installed"
-                Application.save()
+            Application.name = app["name"]
+            Application.icon = app["icon"]
+            Application.command = app["command"]
+            Application.source = "installed"
+            Application.marked_for_deletion = 0
+            Application.save()
 
     def index_plugin_apps(self):
         plugin_path = self.OS.cwd() + "/plugins/indexables/"
@@ -60,10 +73,9 @@ class Indexer:
             if plugin_apps != None:
                 for app in plugin_apps:
                     Application = App()
-
-                    if Application.get_by_name(app["name"]) == None:
-                        Application.name = app["name"]
-                        Application.icon = app["icon"]
-                        Application.command = app["command"]
-                        Application.source = plugin
-                        Application.save()
+                    Application.name = app["name"]
+                    Application.icon = app["icon"]
+                    Application.command = app["command"]
+                    Application.source = plugin
+                    Application.marked_for_deletion = 0
+                    Application.save()

@@ -4,6 +4,7 @@ import json
 from src.lib.db_handler import DBHandler
 from src.lib.os_handler import OSHandler
 from src.models.web_search_plugin import WebSearchPlugin
+from src.models.searchables_plugin import SearchablesPlugin
 from src.models.meta import Meta
 
 class DBMigration:
@@ -12,6 +13,7 @@ class DBMigration:
     OS = OSHandler()
     Meta = Meta()
     WebSearchPlugin = WebSearchPlugin()
+    SearchablesPlugin = SearchablesPlugin()
 
     def load_settings(self):
 
@@ -62,7 +64,7 @@ class DBMigration:
 
             # App table
             cursor.execute('''CREATE TABLE apps
-                         (icon text, name text, command text, selected int, source text)''')
+                         (icon text, name text, command text, selected int, source text, marked_for_deletion int)''')
             self.DB.conn.commit()
 
 
@@ -83,5 +85,12 @@ class DBMigration:
             self.WebSearchPlugin.create("^py3ref ", "", "Search Python 3 ref for \"{query}\"", "https://docs.python.org/3/search.html?q={query}", "resources/icons/python.png")
             self.WebSearchPlugin.create("^phpref ", "", "Search PHP ref for \"{query}\"", "http://php.net/manual-lookup.php?pattern={query}", "resources/icons/php.png")
 
+            # Searchables Plugin table
+            cursor.execute('''create table searchables_plugin
+                         (match text, match_shorthand text, name text, command text, icon text)''')
+            self.DB.conn.commit()
+
+            self.SearchablesPlugin.create("^sup$", "", "What's playing on spotify", "plugins/searchables/spotify_whats_playing", "spotify-client")
+            self.SearchablesPlugin.create("^cb ", "", "Search through Chrome Bookmarks", "plugins/searchables/search_chrome_bookmarks {query}", "google-chrome")
 
         cursor.close()
