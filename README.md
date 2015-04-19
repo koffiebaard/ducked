@@ -50,8 +50,6 @@ Python, GTK, bash, sqlite, kittens.
 python
 
     pygtk
-    https://github.com/seatgeek/fuzzywuzzy
-    python-levenshtein
 
 shell
 

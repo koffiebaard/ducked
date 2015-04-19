@@ -3,7 +3,6 @@
 import re, urllib, random, json
 
 from src.lib.os_handler import OSHandler
-# from src.lib.indexer import Indexer
 from src.models.app import App
 from src.models.web_search_plugin import WebSearchPlugin
 from src.models.searchables_plugin import SearchablesPlugin
@@ -11,12 +10,6 @@ from operator import itemgetter, attrgetter, methodcaller
 
 import logging
 logger = logging.getLogger('ducked')
-
-try:
-    # from fuzzywuzzy import fuzz
-    from fuzzywuzzy import process
-except ImportError:
-    pass
 
 class Search:
 
@@ -72,10 +65,13 @@ class Search:
         """The actual launching of the app"""
 
         if app and type(app) is dict:
+
+            # Log usage to improve the search
+            Application = App()
+            Application.app_is_selected(app["name"])
+
             # Try to bring focus to the window, otherwise just launch it
             if ctrl_pressed == True or "source" not in app or app["source"] != "installed" or self.OS.focus_to_window(app["name"]) == "narp":
-                Application = App()
-                Application.app_is_selected(app["name"])
                 self.OS.goto_app(app["command"])
 
     def search(self, query):
@@ -144,21 +140,15 @@ class Search:
 
         # Is it regexy?
         if re.search("^\^|^\[|\$$|\.[\*|+]|\|", query):
-            print "arr"
+
             app_results = []
             for app_name in app_names:
                 if re.search(query.lower(), app_name.lower()):
                     result = (app_name,100)
                     app_results.append(result)
-        # Otherwise do fuzzy search (if the module is present)
-        elif process:
-            # just a list of names
-            app_results = process.extract(query, app_names, limit=7)
+        # Otherwise do fuzzy search
         else:
-            for app_name in app_names:
-                if query.lower() in app_name.lower():
-                    result = (app_name,100)
-                    app_results.append(result)
+            app_results = self.custom_search_extract(query, app_names, limit=7)
 
         # convert the list of names into a list of objects
         search_results = []
@@ -167,16 +157,48 @@ class Search:
 
         for result in app_results:
             found_app_name = result[0]
-            ratio = result[1]
 
-            if ratio_best_hit == None:
-                ratio_best_hit = ratio
-
-            if ratio > 60 and ratio > (ratio_best_hit - (ratio_best_hit / 3)) and (not " " in query or found_app_name[0:len(query)].lower() == query.lower()):
-                search_results.append(app_findables[found_app_name])
+            search_results.append(app_findables[found_app_name])
 
         search_results = sorted(search_results, key=itemgetter('selected'), reverse=True)
         return search_results
+
+    def custom_search_algorithm(self, query, string):
+
+        regular_search_regex = ".*"
+        for character in query:
+            regular_search_regex += character + ".*"
+
+        word_search_regex = ".*"
+        for character in query:
+            word_search_regex += "[ \-_]*[" + character + "]+"
+        word_search_regex += ".*"
+
+        initials = "".join(re.findall("[A-Z]+", string))
+
+        if re.match("^" + query, string, flags=re.IGNORECASE) != None:
+            return 99
+        if re.match(regular_search_regex, initials, flags=re.IGNORECASE) != None:
+            return 85
+        if re.match(word_search_regex, string, flags=re.IGNORECASE) != None:
+            return 60
+        if re.match(regular_search_regex, string, flags=re.IGNORECASE) != None:
+            return 50
+
+        return 0
+
+    def custom_search_extract(self, query, strings, limit):
+
+        search_results = []
+
+        for string in strings:
+            ratio = self.custom_search_algorithm(query, string)
+            if ratio > 0:
+                search_results.append((string, ratio))
+
+        search_results = sorted(search_results, key=itemgetter(1), reverse=True)
+
+        return search_results[:limit]
 
     def match_for_web_plugin(self, query):
         self.web_plugin = self.WebSearchPlugin.search(query)
