@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
-import re, urllib, random, json
-
+import re
+import urllib
+import random
+import json
+import time
 from src.lib.os_handler import OSHandler
 from src.models.app import App
 from src.models.web_search_plugin import WebSearchPlugin
@@ -100,6 +103,8 @@ class Search:
                 "content": "Wotd wotd?",
                 "command": ""
             }
+        elif re.search('^time\(\)$', query):
+            self.search_results = self.search_unix_timestamp(query)
 
         # anti-boredom feature
         elif re.search('^b[o]+red$', query):
@@ -261,7 +266,8 @@ class Search:
             "http://space-facts.com/mars-panorama/",
             "https://en.wikipedia.org/wiki/Microraptor",
             "https://en.wikipedia.org/wiki/Archelon",
-            "http://www.thesillywalk.com/"
+            "http://www.thesillywalk.com/",
+            "http://planetarynames.wr.usgs.gov/Page/Planets"
         ]
 
         return [{
@@ -307,6 +313,14 @@ class Search:
              "command": self.OS.cwd() + "/bin/open_file https://boards.4chan.org" + query,
              "icon": self.OS.cwd() + "/resources/icons/4chan.png"
          }]
+
+    def search_unix_timestamp(self, query):
+
+        return [{
+            "name": int(time.time()),
+            "command": "",
+            "icon": ""
+        }]
 
     def search_fallback(self, query):
         return [{

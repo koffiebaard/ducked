@@ -48,22 +48,22 @@ class Search:
     def signal_enter_key(self, widget, event):
         """App selection through enter key on listview."""
 
-        # Did you press ctrl?
-        ctrl_pressed = False
-        if event.state & gtk.gdk.CONTROL_MASK:
-            ctrl_pressed = True
+        # Did you press ctrl or shift?
+        modifier_launch_new_app_pressed = False
+        if (event.state & gtk.gdk.CONTROL_MASK) or (event.state & gtk.gdk.SHIFT_MASK):
+            modifier_launch_new_app_pressed = True
 
         if event.keyval == 65293:
             (model, iter) = self.treeview.get_selection().get_selected()
 
             if iter:
                 app_name = model.get_value(iter, 1)
-                self.Search.signal_goto_app_name(app_name, ctrl_pressed)
+                self.Search.signal_goto_app_name(app_name, modifier_launch_new_app_pressed)
                 self.destroy()
                 return True
             else:
                 query = self.entry.get_text()
-                self.Search.signal_goto_first_result(query, ctrl_pressed)
+                self.Search.signal_goto_first_result(query, modifier_launch_new_app_pressed)
                 self.destroy()
                 return True
         return False
