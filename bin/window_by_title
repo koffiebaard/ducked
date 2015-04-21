@@ -1,3 +1,3 @@
 #!/bin/bash
 
-wmctrl -l | grep -i $1| head -n1
+wmctrl -l | grep -i "$@"| head -n1

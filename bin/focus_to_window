@@ -3,7 +3,7 @@
 
 cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-window_title=$($cwd/get_window_title $1)
+window_title=$($cwd/get_window_title "$@")
 
 if [ "$window_title" != "" ]; then
 	xdotool set_desktop_viewport $($cwd/get_window_offset $1) 0

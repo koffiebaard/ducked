@@ -1,5 +1,5 @@
 #!/bin/bash
-pid=$(ps aux | grep -i $1 | grep -v grep | awk '{print $2}' | head -n1)
+pid=$(ps aux | grep -i "$@" | grep -v grep | awk '{print $2}' | head -n1)
 
 if [ "$pid" != "" ]; then
     app=$(wmctrl -lp | grep $pid)
