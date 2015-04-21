@@ -1,0 +1,55 @@
+#!/bin/bash
+
+cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+echo "["
+
+dirs_de_la_awesome=$(echo ~/),$(echo ~/)Downloads,$(echo ~/)Pictures,$(echo ~/)Music,$(echo ~/)Videos,$(echo ~/)Documents,$(echo ~/)Desktop
+
+first_run=false
+
+IFS=","
+for notable_dir in $dirs_de_la_awesome; do
+
+        if [ -d $notable_dir ]; then
+
+            app_name=$(basename $notable_dir)
+            app_icon="$cwd/../../resources/icons/dir.png"
+            app_command="$cwd/../../bin/open_file \\\"$notable_dir\\\""
+
+            if [ $first_run == false ]; then
+                    first_run=true
+            else
+                    echo ","
+            fi
+
+            echo "{"
+                    echo \"name\": \"$app_name\",
+                    echo \"icon\": \"$app_icon\",
+                    echo \"command\": \"$app_command\"
+            echo "}"
+        fi
+done
+
+app_name="Trash"
+app_icon="$cwd/../../resources/icons/dir.png"
+app_command="$cwd/../../bin/open_file \\\"trash:///\\\""
+
+echo ",{"
+     echo \"name\": \"$app_name\",
+     echo \"icon\": \"$app_icon\",
+     echo \"command\": \"$app_command\"
+echo "}"
+
+
+app_name="Home"
+app_icon="$cwd/../../resources/icons/dir.png"
+app_command="$cwd/../../bin/open_file \\\"$(echo ~/)\\\""
+
+echo ",{"
+     echo \"name\": \"$app_name\",
+     echo \"icon\": \"$app_icon\",
+     echo \"command\": \"$app_command\"
+echo "}"
+
+echo "]"
