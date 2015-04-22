@@ -176,7 +176,7 @@ class Search:
 
         word_search_regex = ".*"
         for character in query:
-            word_search_regex += "[ \-_]*[" + character + "]+"
+            word_search_regex += "[ \-_]+[" + character + "]+"
         word_search_regex += ".*"
 
         initials = "".join(re.findall("[A-Z]+", string))
@@ -185,6 +185,8 @@ class Search:
             return 99
         if re.match(regular_search_regex, initials, flags=re.IGNORECASE) != None:
             return 85
+        if query in string.lower():
+            return 70
         if re.match(word_search_regex, string, flags=re.IGNORECASE) != None:
             return 60
         if re.match(regular_search_regex, string, flags=re.IGNORECASE) != None:
