@@ -80,6 +80,10 @@ class Search:
     def search(self, query):
         """Search for anything the user wants"""
 
+        # Bitches!
+        if re.search('\s*bitches$', query):
+            query = re.sub("\s*bitches$", "", query)
+
         # 4Channey?
         if query in ["/a/","/c/","/w/","/m/","/cgl/","/cm/","/f/","/n/","/jp/","/vp/","/v/","/vg/","/vr/","/co/","/g/","/tv/","/k/","/o/","/an/","/tg/","/sp/","/asp/","/sci/","/int/","/out/","/toy/","/biz/","/i/","/po/","/p/","/ck/","/ic/","/wg/","/mu/","/fa/","/3/","/gd/","/diy/","/wsg/","/trv/","/fit/","/x/","/lit/","/adv/","/lgbt/","/mlp/","/b/","/r/","/r9k/","/pol/","/soc/","/s4s/","/s/","/hc/","/hm/","/h/","/e/","/u/","/d/","/y/","/t/","/hr/","/gif/"]:
             self.search_results = self.search_4chan(query)
@@ -103,8 +107,12 @@ class Search:
                 "content": "Wotd wotd?",
                 "command": ""
             }
+
         elif re.search('^time\(\)$', query):
             self.search_results = self.search_unix_timestamp(query)
+
+        elif re.search('^[w]*h[e]+lp[!1]*$', query):
+            self.search_results = self.search_help(query)
 
         # anti-boredom feature
         elif re.search('^b[o]+red$', query):
@@ -322,6 +330,14 @@ class Search:
             "name": int(time.time()),
             "command": "",
             "icon": ""
+        }]
+
+    def search_help(self, query):
+
+        return [{
+            "name": "No.",
+            "command": self.OS.cwd() + "/bin/open_file https://www.google.com/#q=i+love+clippy",
+            "icon": self.OS.cwd() + "/resources/icons/clippy.png"
         }]
 
     def search_fallback(self, query):

@@ -47,22 +47,20 @@ Python, GTK, bash, sqlite, kittens.
 
 ## dependencies
 
-python
+- python
+    - pygtk
 
-    pygtk
-
-shell
-
-    xdotool
-    wmctrl
+- shell
+    - xdotool (optional, needed for feature bringing apps to front if already opened)
+    - wmctrl (optional, needed for feature bringing apps to front if already opened)
     
     
 ## Installation on Ubuntu
 
 ### dependencies
-sudo pip install pygtk python-levenshtein fuzzywuzzy
+    sudo pip install pygtk
 
-sudo apt-get install xdotool wmctrl
+    sudo apt-get install xdotool wmctrl
 
 ### install app (directly from master)
 cd /usr/share

@@ -95,7 +95,7 @@ class Search:
 
         self.window.connect("destroy", self.destroy)
 
-        self.window.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("#ffffff"))
+        self.window.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("#ebebeb"))
         self.window.set_border_width(10)
         self.window.set_size_request(650,-1)
         self.window.set_position(gtk.WIN_POS_CENTER)
@@ -112,8 +112,8 @@ class Search:
         self.entry = gtk.Entry()
         self.entry.set_size_request(450,100)
 
-        self.entry.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("#ffffff"))
-        self.entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#ffffff"))
+        self.entry.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("#ebebeb"))
+        self.entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#ebebeb"))
         self.entry.modify_text(gtk.STATE_NORMAL, gtk.gdk.color_parse("#22352c"))
         self.entry.modify_fg(gtk.STATE_NORMAL, gtk.gdk.color_parse("#22352c"))
 
@@ -154,10 +154,9 @@ class Search:
         self.tvcolumn = gtk.TreeViewColumn('')
         self.treeview.append_column(self.tvcolumn)
 
-
         # Render Icon
         self.cellpb = gtk.CellRendererPixbuf()
-        self.cellpb.set_property('cell-background', '#ffffff')
+        self.cellpb.set_property('cell-background', '#ebebeb')
         self.tvcolumn.pack_start(self.cellpb, expand=False)
         # self.tvcolumn.set_attributes(self.cellpb, stock_id=1)
         self.tvcolumn.add_attribute(self.cellpb, 'pixbuf', 0)
@@ -166,7 +165,7 @@ class Search:
         self.cell = gtk.CellRendererText()
         font_description = pango.FontDescription('Lucida Sans %s' % 21)
         self.cell.set_property('font-desc', font_description)
-        self.cell.set_property('cell-background', '#ffffff')
+        self.cell.set_property('cell-background', '#ebebeb')
         self.cell.set_property('foreground', '#525252')
         self.tvcolumn.pack_start(self.cell, True)
         # self.tvcolumn.set_attributes(self.cell, text=0)
@@ -175,7 +174,7 @@ class Search:
         # self.cell_shortcut = gtk.CellRendererText()
         # font_description = pango.FontDescription('Lucida Sans %s' % 21)
         # self.cell_shortcut.set_property('font-desc', font_description)
-        # self.cell_shortcut.set_property('cell-background', '#ffffff')
+        # self.cell_shortcut.set_property('cell-background', '#ebebeb')
         # self.cell_shortcut.set_property('foreground', '#525252')
         # self.tvcolumn.pack_start(self.cell_shortcut, True)
         # self.tvcolumn.add_attribute(self.cell_shortcut, 'text', 2)
