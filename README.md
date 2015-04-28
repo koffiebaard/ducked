@@ -25,7 +25,7 @@ It also:
 - Choose to bring to front or launch anew (press enter == bring to front if possible, ctrl+enter == open new app).
 
 ## Essentials
-Python, GTK, bash, sqlite, kittens.
+Python, GTK, bash, sqlite, CLI support, kittens.
 
 ## screenshots
 

@@ -78,7 +78,7 @@ class Search:
                 self.OS.goto_app(app["command"])
 
     def search(self, query):
-        """Search for anything the user wants"""
+        """Search for anything the user wants. Wrapper for every search method we have."""
 
         # Bitches!
         if re.search('\s*bitches$', query):
@@ -141,6 +141,7 @@ class Search:
         return self.search_results
 
     def search_apps(self, query):
+        """Search in the cache of apps (which also holds indexable plugins)"""
 
         apps = self.App.get_all()
 
