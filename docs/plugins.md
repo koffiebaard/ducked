@@ -23,10 +23,10 @@ The searchable scripts that are shipped with Ducked are in ducked/plugin/searcha
 
 The output of a plugin (be it indexable or searchable) is in JSON, and should match the following:
 
-[{"
+[{
     "name": "Ducked",
     "icon": "/usr/share/local/icons/ducked-is-the-shit-yo-48x48.png",
-    "command": "~/yeah.sh"
+    "command": "~/dothething.sh"
 }]
 
 It's of course an array, and you can add as much results as you like.
