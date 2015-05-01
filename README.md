@@ -22,10 +22,10 @@ It also:
 - allows you to browse to websites immediately by entering a URL
 - has a plugin system, to extend web searches, and to run your own commands, extending functionalities as you see fit.
 - Lets you jump to directories (or open files)
-- Choose to bring to front or launch anew (press enter == bring to front if possible, ctrl+enter == open new app).
+- Choose to bring to front or launch anew (press enter == bring to front if possible, ctrl+enter == open the app anew in any case).
 
 ## Essentials
-Python, GTK, bash, sqlite, CLI support, kittens.
+Python, GTK, bash, sqlite, CLI support, plugin system, kittens.
 
 ## screenshots
 
@@ -63,11 +63,11 @@ Python, GTK, bash, sqlite, CLI support, kittens.
     sudo apt-get install xdotool wmctrl
 
 ### install app (directly from master)
-cd /usr/share
+	cd /usr/share
 
-git clone https://github.com/wisc/ducked.git
+	git clone https://github.com/wisc/ducked.git
 
-ln -s /usr/share/ducked/ducked.py /usr/local/bin/ducked
+	ln -s /usr/share/ducked/ducked.py /usr/local/bin/ducked
 
 ### Launch
 
