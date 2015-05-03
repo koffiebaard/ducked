@@ -32,3 +32,5 @@ The output of a plugin (be it indexable or searchable) is in JSON, and should ma
 ```
 
 It's, of course, an array, and you can add as much results as you like.
+
+The icon can either be the icon name (when the icon is placed in one of the regular icon dirs), or the full path. It should be 48x48.
